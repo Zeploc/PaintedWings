@@ -23,11 +23,11 @@ public:
 
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 		float BaseTurnRate;
 
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 		float BaseLookUpRate;
 
 protected:
@@ -53,6 +53,8 @@ protected:
 	void LookUpAtRate(float Rate);
 
 	float NormalGravity;
+
+	float NormalAirControl;
 	
 	FTimerHandle JumpHoldTimerHandle;
 	void StartGlide();
@@ -60,6 +62,8 @@ protected:
 
 	void StartJump();
 	void StopJump();
+
+	void SwitchGlide(bool IsGliding);
 
 public:	
 	// Called every frame
@@ -75,6 +79,16 @@ public:
 		float GlidingGravity = 0.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float GlidingAirControl = 0.2f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float JumpTimeToGlide = 0.2f;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float MaxGlideRollRotate = 30.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float MaxGlidePitchRotate = 20.0f;
 
 };

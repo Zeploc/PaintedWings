@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/World.h"
 #include "Engine.h"
+#include "EngineUtils.h"
 
 // Sets default values
 ABirdPlayer::ABirdPlayer()
@@ -47,14 +48,14 @@ ABirdPlayer::ABirdPlayer()
 	ThirdPersonCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 	ThirdPersonCamera->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 
-	NormalGravity = GetCharacterMovement()->GravityScale;
 }
 
 // Called when the game starts or when spawned
 void ABirdPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	NormalGravity = GetCharacterMovement()->GravityScale;
+	NormalAirControl = GetCharacterMovement()->AirControl;	
 }
 
 // Called every frame
@@ -62,15 +63,7 @@ void ABirdPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bIsGliding)
-	{
-		GetCharacterMovement()->GravityScale = GlidingGravity;
-		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "GLIDING");
-	}
-	else
-	{
-		GetCharacterMovement()->GravityScale = NormalGravity;
-	}
+	
 
 	if (!IsJumpProvidingForce())
 	{
@@ -115,6 +108,51 @@ void ABirdPlayer::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
+		if (bIsGliding)
+		{
+			/*FVector CameraForward = ThirdPersonCamera->GetForwardVector();
+			CameraForward.Y = 0.0f;
+			UE_LOG(LogTemp, Warning, TEXT("Before %s"), *Rotation.ToString());
+			Rotation.Pitch -= Value;
+			Rotation.Pitch = FMath::Clamp(Rotation.Pitch, -MaxGlidePitchRotate, MaxGlidePitchRotate);
+			UE_LOG(LogTemp, Warning, TEXT("After %s"), *Rotation.ToString());
+
+			GetMesh()->SetRelativeRotation(Rotation);*/
+
+
+			/*FVector CameraForward = ThirdPersonCamera->GetRightVector();
+			CameraForward.Y = 0.0f;
+
+			FVector DirectionVector = CameraForward.RotateAngleAxis(Value, FVector(0, 1, 0));
+			FRotator DirectionRotation = DirectionVector.Rotation();
+
+			FRotator Rotation = GetMesh()->GetComponentRotation();
+
+			Rotation += DirectionRotation;
+			Rotation.Pitch = FMath::Clamp(Rotation.Pitch, -MaxGlidePitchRotate, MaxGlidePitchRotate);*/
+
+			//FRotator CameraRotation = CameraForward.Rotation();
+			//CameraRotation.Pitch = 0.0f;
+			//Rotation.RotateVector(CameraForward);
+
+			//FRotator CameraRotation = CameraForward.Rotation();
+			//CameraRotation.Pitch = 0.0f;
+
+			//UE_LOG(LogTemp, Warning, TEXT("Camera Rot %s"), *CameraRotation.ToString());
+
+			////FRotator Rotation = GetMesh()->RelativeRotation;
+			//CameraRotation.Pitch -= Value * MaxGlideRollRotate;
+			//CameraRotation.Pitch = FMath::Clamp(CameraRotation.Pitch, -MaxGlidePitchRotate, MaxGlidePitchRotate);
+			//CameraRotation.Yaw = GetMesh()->GetComponentRotation().Yaw;
+
+			FVector CameraForward = ThirdPersonCamera->GetForwardVector();
+			CameraForward.Y = 0.0f;
+
+			UE_LOG(LogTemp, Warning, TEXT("Camera Rot %s"), *CameraForward.ToString());
+
+			//GetMesh()->SetWorldRotation(Rotation);
+		}
+
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -129,6 +167,25 @@ void ABirdPlayer::MoveRight(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
+		if (bIsGliding)
+		{
+			//FVector CameraForward = ThirdPersonCamera->GetForwardVector();
+			//CameraForward.Y = 0.0f;
+
+			//FRotator CameraRotation = CameraForward.Rotation();
+
+			////FRotator Rotation = GetMesh()->RelativeRotation;
+			////UE_LOG(LogTemp, Warning, TEXT("Before %s"), *Rotation.ToString());
+			//CameraRotation.Roll += Value * MaxGlideRollRotate;
+			//CameraRotation.Roll = FMath::Clamp(CameraRotation.Roll, -MaxGlideRollRotate, MaxGlideRollRotate);
+
+			//GetMesh()->SetWorldRotation(CameraRotation);
+			//UE_LOG(LogTemp, Warning, TEXT("After %s"), *Rotation.ToString());
+
+			//GetMesh()->SetRelativeRotation(Rotation);
+			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Purple, Rotation.ToString());
+		}
+
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -143,11 +200,10 @@ void ABirdPlayer::MoveRight(float Value)
 
 void ABirdPlayer::StartGlide()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Purple, "Timer Complete");
 	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	if (JumpHeld)
 	{
-		bIsGliding = true;
+		SwitchGlide(true);
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, "Setting Glide");
 	}
 }
@@ -156,12 +212,30 @@ void ABirdPlayer::StartJump()
 {
 	Jump();
 	JumpHeld = true;
-	bIsGliding = false;
+	SwitchGlide(false);
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
 }
 void ABirdPlayer::StopJump()
 {
 	StopJumping();
 	JumpHeld = false;
-	bIsGliding = false;
+	SwitchGlide(false);
+}
+
+void ABirdPlayer::SwitchGlide(bool IsGliding)
+{
+	bIsGliding = IsGliding;
+	if (bIsGliding)
+	{
+		GetCharacterMovement()->GravityScale = GlidingGravity;
+		GetCharacterMovement()->AirControl = GlidingAirControl;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
+	else
+	{
+		GetCharacterMovement()->GravityScale = NormalGravity;
+		GetCharacterMovement()->AirControl = NormalAirControl;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetMesh()->SetRelativeRotation(FRotator::ZeroRotator);
+	}
 }
