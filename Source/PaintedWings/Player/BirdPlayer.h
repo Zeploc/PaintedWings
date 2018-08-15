@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "BirdPlayer.generated.h"
-
+class UCapsuleComponent;
 UCLASS()
 class PAINTEDWINGS_API ABirdPlayer : public ACharacter
 {
@@ -29,6 +29,8 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
+	UPROPERTY(EditAnywhere)
+		AActor* CurrentCheckpoint;
 
 protected:
 	// Called when the game starts or when spawned
@@ -57,7 +59,11 @@ protected:
 	FTimerHandle JumpHoldTimerHandle;
 	void StartGlide();
 	bool JumpHeld = false;
+	bool bCanGlid = false;
+	bool bTouchingNectar = false;
 
+	bool bInputEnabled = true;
+	int iInputDelay = 0;
 	void StartJump();
 	void StopJump();
 
@@ -67,6 +73,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void MoveToCheckpoint();
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bIsGliding = false;
@@ -76,5 +83,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float JumpTimeToGlide = 0.2f;
+	void NectarGathering();
+	void InputDelayer();
+	UCapsuleComponent* playerCapsuleTrigger;
+	//overlap events
+	UFUNCTION()
+		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 };

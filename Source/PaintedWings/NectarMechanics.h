@@ -4,19 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "playerCheckpointMechanics.generated.h"
+#include "NectarMechanics.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PAINTEDWINGS_API UplayerCheckpointMechanics : public UActorComponent
+class PAINTEDWINGS_API UNectarMechanics : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UplayerCheckpointMechanics();
-	UPROPERTY(EditAnywhere)
-		AActor* m_pCurrentCheckpoint;
+	UNectarMechanics();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -24,5 +23,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void MoveToCurrentCheckpoint();
+
+		
+	
 };

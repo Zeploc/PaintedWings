@@ -30,15 +30,17 @@ void UplayerCheckpointMechanics::BeginPlay()
 // Called every frame
 void UplayerCheckpointMechanics::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	//Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
 }
 
 void UplayerCheckpointMechanics::MoveToCurrentCheckpoint()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Checkpoint Activating"));
 	if (m_pCurrentCheckpoint)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Checkpoint Activated"));
 		GetOwner()->SetActorLocation(m_pCurrentCheckpoint->GetActorLocation());
 	}
 }
