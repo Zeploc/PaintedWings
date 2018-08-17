@@ -9,15 +9,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/World.h"
 #include "Engine.h"
-<<<<<<< HEAD
 #include "EngineUtils.h"
 
-=======
 #include "playerCheckpointMechanics.h"
 #include "EngineUtils.h"
 #include "Components/CapsuleComponent.h"
 #include "NectarMechanics.h"
->>>>>>> 62dd336ee05bc5dfcd93b43f85e87e056598ba81
 // Sets default values
 
 ABirdPlayer::ABirdPlayer()
@@ -56,12 +53,8 @@ ABirdPlayer::ABirdPlayer()
 	ThirdPersonCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 	ThirdPersonCamera->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 
-<<<<<<< HEAD
-=======
 	NormalGravity = GetCharacterMovement()->GravityScale;
-
-
->>>>>>> 62dd336ee05bc5dfcd93b43f85e87e056598ba81
+	
 }
 
 // Called when the game starts or when spawned
