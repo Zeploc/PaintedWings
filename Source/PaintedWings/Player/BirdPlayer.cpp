@@ -83,13 +83,16 @@ void ABirdPlayer::Tick(float DeltaTime)
 	{
 		GetCharacterMovement()->GravityScale = NormalGravity;
 	}
+
 	if(this->GetActorLocation().Z < -100.0f)
 	{
-		this->FindComponentByClass<UplayerCheckpointMechanics>()->MoveToCurrentCheckpoint();
+		UplayerCheckpointMechanics* CheckpointMech = this->FindComponentByClass<UplayerCheckpointMechanics>();
+		if (CheckpointMech) CheckpointMech->MoveToCurrentCheckpoint();
 	
 	}
-	if (!IsJumpProvidingForce())
+	if (GetCharacterMovement()->IsFalling() == true)
 	{
+		DoubleJump = false;
 		//bIsGliding = false;
 	}
 	InputDelayer();
@@ -233,6 +236,8 @@ void ABirdPlayer::MoveForward(float Value)
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
+
+
 	}
 }
 
@@ -286,10 +291,18 @@ void ABirdPlayer::StartGlide()
 void ABirdPlayer::StartJump()
 {
 	if (!bInputEnabled) return;
-	Jump();
-	JumpHeld = true;
 	SwitchGlide(false);
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
+	if (GetCharacterMovement()->IsFalling())
+	{
+		DoubleJump = true;
+		GetWorldTimerManager().SetTimer(DoubleJumpTimerHandle, this, &ABirdPlayer::ApplyDoubleJump, DoubleJumpDelay, false);
+	}
+	else
+	{
+		Jump();
+		JumpHeld = true;
+	}
 }
 void ABirdPlayer::StopJump()
 {
@@ -298,6 +311,13 @@ void ABirdPlayer::StopJump()
 	StopJumping();
 	JumpHeld = false;
 	SwitchGlide(false);
+}
+
+void ABirdPlayer::ApplyDoubleJump()
+{
+	GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
+	Jump();
+	JumpHeld = true;
 }
 
 void ABirdPlayer::SwitchGlide(bool IsGliding)
@@ -315,6 +335,7 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 		GetCharacterMovement()->AirControl = NormalAirControl;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetMesh()->SetRelativeRotation(FRotator::ZeroRotator);
+		//bCanGlid = false;
 	}
 }
 

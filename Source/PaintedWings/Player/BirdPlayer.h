@@ -59,6 +59,7 @@ protected:
 	float NormalAirControl;
 	
 	FTimerHandle JumpHoldTimerHandle;
+	FTimerHandle DoubleJumpTimerHandle;
 	void StartGlide();
 	bool JumpHeld = false;
 	bool bCanGlid = false;
@@ -68,6 +69,7 @@ protected:
 	int iInputDelay = 0;
 	void StartJump();
 	void StopJump();
+	void ApplyDoubleJump();
 
 	void SwitchGlide(bool IsGliding);
 
@@ -90,6 +92,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float JumpTimeToGlide = 0.2f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DoubleJumpDelay = 0.2f;
+
 	void NectarGathering();
 	void InputDelayer();
 	UCapsuleComponent* playerCapsuleTrigger;
@@ -107,4 +113,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxGlidePitchRotate = 20.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool DoubleJump = false;
 };
