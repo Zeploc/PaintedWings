@@ -2,16 +2,24 @@
 
 #include "BirdPlayer.h"
 
-
+#include "playerCheckpointMechanics.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/World.h"
 #include "Engine.h"
+<<<<<<< HEAD
 #include "EngineUtils.h"
 
+=======
+#include "playerCheckpointMechanics.h"
+#include "EngineUtils.h"
+#include "Components/CapsuleComponent.h"
+#include "NectarMechanics.h"
+>>>>>>> 62dd336ee05bc5dfcd93b43f85e87e056598ba81
 // Sets default values
+
 ABirdPlayer::ABirdPlayer()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -48,6 +56,12 @@ ABirdPlayer::ABirdPlayer()
 	ThirdPersonCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 	ThirdPersonCamera->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 
+<<<<<<< HEAD
+=======
+	NormalGravity = GetCharacterMovement()->GravityScale;
+
+
+>>>>>>> 62dd336ee05bc5dfcd93b43f85e87e056598ba81
 }
 
 // Called when the game starts or when spawned
@@ -56,6 +70,10 @@ void ABirdPlayer::BeginPlay()
 	Super::BeginPlay();
 	NormalGravity = GetCharacterMovement()->GravityScale;
 	NormalAirControl = GetCharacterMovement()->AirControl;	
+
+	playerCapsuleTrigger = FindComponentByClass<UCapsuleComponent>();
+	playerCapsuleTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapBegin);
+	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
 }
 
 // Called every frame
@@ -63,12 +81,25 @@ void ABirdPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bIsGliding)
+	{
+		GetCharacterMovement()->GravityScale = GlidingGravity;
+		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "GLIDING");
+	}
+	else
+	{
+		GetCharacterMovement()->GravityScale = NormalGravity;
+	}
+	if(this->GetActorLocation().Z < -100.0f)
+	{
+		this->FindComponentByClass<UplayerCheckpointMechanics>()->MoveToCurrentCheckpoint();
 	
-
+	}
 	if (!IsJumpProvidingForce())
 	{
 		//bIsGliding = false;
 	}
+	InputDelayer();
 }
 
 // Called to bind functionality to input
@@ -78,7 +109,6 @@ void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABirdPlayer::StartJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ABirdPlayer::StopJump);
-
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABirdPlayer::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABirdPlayer::MoveRight);
 
@@ -89,23 +119,29 @@ void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("TurnRate", this, &ABirdPlayer::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABirdPlayer::LookUpAtRate);
+	PlayerInputComponent->BindAction("Respawn", IE_Pressed, this, &ABirdPlayer::MoveToCheckpoint);
+	PlayerInputComponent->BindAction("NectarSuck", IE_Pressed, this, &ABirdPlayer::NectarGathering);
 }
 
 void ABirdPlayer::TurnAtRate(float Rate)
 {
-	// calculate delta for this frame from the rate information
+	if (!bInputEnabled) return;
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+
+	// calculate delta for this frame from the rate information
 }
 
 
 void ABirdPlayer::LookUpAtRate(float Rate)
 {
+	if (!bInputEnabled) return;
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ABirdPlayer::MoveForward(float Value)
 {
+	if (!bInputEnabled) return;
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
 		// find out which way is forward
@@ -209,6 +245,7 @@ void ABirdPlayer::MoveForward(float Value)
 
 void ABirdPlayer::MoveRight(float Value)
 {
+	if (!bInputEnabled) return;
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
 		if (bIsGliding)
@@ -244,16 +281,18 @@ void ABirdPlayer::MoveRight(float Value)
 
 void ABirdPlayer::StartGlide()
 {
+	if (!bInputEnabled || !bCanGlid) return;
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Purple, "Timer Complete");
 	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	if (JumpHeld)
 	{
 		SwitchGlide(true);
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, "Setting Glide");
 	}
 }
 
 void ABirdPlayer::StartJump()
 {
+	if (!bInputEnabled) return;
 	Jump();
 	JumpHeld = true;
 	SwitchGlide(false);
@@ -261,6 +300,8 @@ void ABirdPlayer::StartJump()
 }
 void ABirdPlayer::StopJump()
 {
+	if (!bInputEnabled) return;
+
 	StopJumping();
 	JumpHeld = false;
 	SwitchGlide(false);
@@ -281,5 +322,58 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 		GetCharacterMovement()->AirControl = NormalAirControl;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetMesh()->SetRelativeRotation(FRotator::ZeroRotator);
+	}
+}
+
+void ABirdPlayer::MoveToCheckpoint()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Checkpoint Activating"));
+	if (this)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerFound"));
+		if (this->FindComponentByClass<UplayerCheckpointMechanics>())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Mechanics Script Found"));
+			this->FindComponentByClass<UplayerCheckpointMechanics>()->MoveToCurrentCheckpoint();
+		}
+	}
+}
+
+void ABirdPlayer::NectarGathering()
+{
+	if (bTouchingNectar)
+	{
+		iInputDelay = 60;
+		bInputEnabled = false;
+		bCanGlid = true;
+	}
+}
+
+void ABirdPlayer::InputDelayer()
+{
+	if (iInputDelay >= 0)
+	{
+		iInputDelay--;
+	}
+	else
+	{
+		bInputEnabled = true;
+	}
+}
+
+
+void ABirdPlayer::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	if (OtherActor->FindComponentByClass<UNectarMechanics>())
+	{
+		bTouchingNectar = true;
+	}
+}
+
+void ABirdPlayer::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor->FindComponentByClass<UNectarMechanics>())
+	{
+		bTouchingNectar = false;
 	}
 }
