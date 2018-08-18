@@ -126,8 +126,8 @@ void ABirdPlayer::Tick(float DeltaTime)
 	{
 		if (bHasGlided && bCanGlide)
 		{
-			bCanGlide = false;
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Disable Can Glide");
+			//bCanGlide = false;
+			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Disable Can Glide");
 		}
 	}
 	InputDelayer();
@@ -291,24 +291,12 @@ void ABirdPlayer::MoveRight(float Value)
 	}
 }
 
-
-void ABirdPlayer::StartGlide()
-{
-	if (!bInputEnabled || !bCanGlide) return;
-	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Purple, "Timer Complete");
-	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
-	if (JumpHeld)
-	{
-		SwitchGlide(true);
-	}
-}
-
-
 void ABirdPlayer::StartJump()
 {
 	if (!bInputEnabled) return;
 	SwitchGlide(false);
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
+	JumpHeld = true;
 	if (GetCharacterMovement()->IsFalling())
 	{
 		DoubleJump = true;
@@ -317,7 +305,6 @@ void ABirdPlayer::StartJump()
 	else
 	{
 		Jump();
-		JumpHeld = true;
 	}
 }
 
@@ -334,7 +321,18 @@ void ABirdPlayer::ApplyDoubleJump()
 {
 	GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
 	Jump();
-	JumpHeld = true;
+	//JumpHeld = true;
+}
+
+void ABirdPlayer::StartGlide()
+{
+	if (!bInputEnabled || !bCanGlide) return;
+	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
+	if (JumpHeld)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Purple, "Start Glide");
+		SwitchGlide(true);
+	}
 }
 
 void ABirdPlayer::Dash()
@@ -371,7 +369,7 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 		GetCharacterMovement()->GravityScale = GlidingGravity;
 		GetCharacterMovement()->AirControl = GlidingAirControl;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
-		bHasGlided = true;
+		//bHasGlided = true;
 	}
 	else
 	{

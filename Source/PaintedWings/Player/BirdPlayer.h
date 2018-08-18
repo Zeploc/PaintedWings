@@ -63,7 +63,7 @@ protected:
 	FTimerHandle DashTimerHandle;
 	void StartGlide();
 	bool JumpHeld = false;
-	bool bCanGlide = false;
+	bool bCanGlide = true;
 	bool bHasGlided = false;
 	bool bTouchingNectar = false;
 
