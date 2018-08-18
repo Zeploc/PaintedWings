@@ -130,12 +130,6 @@ void ABirdPlayer::Tick(float DeltaTime)
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Disable Can Glide");
 		}
 	}
-	if (IsDashing)
-	{
-		FRotator Rotation = GetMesh()->GetComponentRotation();
-		Rotation.Roll += DashRotationSpeed * DeltaTime;
-		//GetMesh()->SetRelativeRotation(Rotation);
-	}
 	InputDelayer();
 }
 
@@ -352,6 +346,10 @@ void ABirdPlayer::Dash()
 	GetWorldTimerManager().SetTimer(DashTimerHandle, this, &ABirdPlayer::FinishDash, DashTimer, false);
 	IsDashing = true;
 	bIsGliding = false;
+
+	FRotator Rotation = Controller->GetControlRotation();
+	Rotation.Yaw = DashDirectionForce.Rotation().Yaw;
+	Controller->SetControlRotation(Rotation);
 }
 
 void ABirdPlayer::FinishDash()

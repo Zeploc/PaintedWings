@@ -75,7 +75,6 @@ protected:
 
 	void Dash();
 	void FinishDash();
-	bool IsDashing = false;
 
 	void SwitchGlide(bool IsGliding);
 
@@ -97,7 +96,7 @@ public:
 		float GlidingAirControl = 0.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float JumpTimeToGlide = 0.2f;
+		float JumpTimeToGlide = 0.4f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DoubleJumpDelay = 0.1f;
@@ -106,10 +105,10 @@ public:
 		float DashForce = 1000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float DashTimer = 0.8f;
-
+		float DashTimer = 0.6f;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float DashRotationSpeed = 30.0f;
+		bool IsDashing = false;
 
 	void NectarGathering();
 	void InputDelayer();
