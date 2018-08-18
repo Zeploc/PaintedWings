@@ -60,9 +60,11 @@ protected:
 	
 	FTimerHandle JumpHoldTimerHandle;
 	FTimerHandle DoubleJumpTimerHandle;
+	FTimerHandle DashTimerHandle;
 	void StartGlide();
 	bool JumpHeld = false;
-	bool bCanGlid = false;
+	bool bCanGlide = false;
+	bool bHasGlided = false;
 	bool bTouchingNectar = false;
 
 	bool bInputEnabled = true;
@@ -70,6 +72,10 @@ protected:
 	void StartJump();
 	void StopJump();
 	void ApplyDoubleJump();
+
+	void Dash();
+	void FinishDash();
+	bool IsDashing = false;
 
 	void SwitchGlide(bool IsGliding);
 
@@ -94,7 +100,16 @@ public:
 		float JumpTimeToGlide = 0.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float DoubleJumpDelay = 0.2f;
+		float DoubleJumpDelay = 0.1f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DashForce = 1000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DashTimer = 0.8f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DashRotationSpeed = 30.0f;
 
 	void NectarGathering();
 	void InputDelayer();

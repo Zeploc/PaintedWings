@@ -69,6 +69,29 @@ void ABirdPlayer::BeginPlay()
 	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
 }
 
+// Called to bind functionality to input
+void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABirdPlayer::StartJump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ABirdPlayer::StopJump);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ABirdPlayer::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ABirdPlayer::MoveRight);
+
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ABirdPlayer::Dash);
+
+	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
+	// "turn" handles devices that provide an absolute delta, such as a mouse.
+	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("TurnRate", this, &ABirdPlayer::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &ABirdPlayer::LookUpAtRate);
+	PlayerInputComponent->BindAction("Respawn", IE_Pressed, this, &ABirdPlayer::MoveToCheckpoint);
+	PlayerInputComponent->BindAction("NectarSuck", IE_Pressed, this, &ABirdPlayer::NectarGathering);
+}
+
 // Called every frame
 void ABirdPlayer::Tick(float DeltaTime)
 {
@@ -76,7 +99,12 @@ void ABirdPlayer::Tick(float DeltaTime)
 
 	if (bIsGliding)
 	{
-		GetCharacterMovement()->GravityScale = GlidingGravity;
+		if (GetVelocity().Z > 0)
+		{
+			GetCharacterMovement()->GravityScale = NormalGravity;
+		}
+		else
+			GetCharacterMovement()->GravityScale = GlidingGravity;
 		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "GLIDING");
 	}
 	else
@@ -90,34 +118,27 @@ void ABirdPlayer::Tick(float DeltaTime)
 		if (CheckpointMech) CheckpointMech->MoveToCurrentCheckpoint();
 	
 	}
-	if (GetCharacterMovement()->IsFalling() == true)
+	if (GetCharacterMovement()->IsFalling())
 	{
 		DoubleJump = false;
-		//bIsGliding = false;
+	}
+	else
+	{
+		if (bHasGlided && bCanGlide)
+		{
+			bCanGlide = false;
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Disable Can Glide");
+		}
+	}
+	if (IsDashing)
+	{
+		FRotator Rotation = GetMesh()->GetComponentRotation();
+		Rotation.Roll += DashRotationSpeed * DeltaTime;
+		//GetMesh()->SetRelativeRotation(Rotation);
 	}
 	InputDelayer();
 }
 
-// Called to bind functionality to input
-void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABirdPlayer::StartJump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ABirdPlayer::StopJump);
-	PlayerInputComponent->BindAxis("MoveForward", this, &ABirdPlayer::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ABirdPlayer::MoveRight);
-
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &ABirdPlayer::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &ABirdPlayer::LookUpAtRate);
-	PlayerInputComponent->BindAction("Respawn", IE_Pressed, this, &ABirdPlayer::MoveToCheckpoint);
-	PlayerInputComponent->BindAction("NectarSuck", IE_Pressed, this, &ABirdPlayer::NectarGathering);
-}
 
 void ABirdPlayer::TurnAtRate(float Rate)
 {
@@ -279,14 +300,15 @@ void ABirdPlayer::MoveRight(float Value)
 
 void ABirdPlayer::StartGlide()
 {
-	if (!bInputEnabled || !bCanGlid) return;
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Purple, "Timer Complete");
+	if (!bInputEnabled || !bCanGlide) return;
+	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Purple, "Timer Complete");
 	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	if (JumpHeld)
 	{
 		SwitchGlide(true);
 	}
 }
+
 
 void ABirdPlayer::StartJump()
 {
@@ -304,6 +326,7 @@ void ABirdPlayer::StartJump()
 		JumpHeld = true;
 	}
 }
+
 void ABirdPlayer::StopJump()
 {
 	if (!bInputEnabled) return;
@@ -320,6 +343,28 @@ void ABirdPlayer::ApplyDoubleJump()
 	JumpHeld = true;
 }
 
+void ABirdPlayer::Dash()
+{
+	GetCharacterMovement()->GravityScale = 0.0f;
+	FVector DashDirectionForce = ThirdPersonCamera->GetForwardVector() * DashForce;
+	DashDirectionForce.Z = 0.0f;
+	LaunchCharacter(DashDirectionForce, true, true);
+	GetWorldTimerManager().SetTimer(DashTimerHandle, this, &ABirdPlayer::FinishDash, DashTimer, false);
+	IsDashing = true;
+	bIsGliding = false;
+}
+
+void ABirdPlayer::FinishDash()
+{
+	GetWorldTimerManager().ClearTimer(DashTimerHandle);
+	GetCharacterMovement()->GravityScale = NormalGravity;
+	IsDashing = false;
+
+	FRotator Rotation = GetMesh()->RelativeRotation;
+	Rotation.Roll = 0.0f;
+	GetMesh()->RelativeRotation = Rotation;
+}
+
 void ABirdPlayer::SwitchGlide(bool IsGliding)
 {
 	bIsGliding = IsGliding;
@@ -328,6 +373,7 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 		GetCharacterMovement()->GravityScale = GlidingGravity;
 		GetCharacterMovement()->AirControl = GlidingAirControl;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
+		bHasGlided = true;
 	}
 	else
 	{
@@ -335,7 +381,6 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 		GetCharacterMovement()->AirControl = NormalAirControl;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetMesh()->SetRelativeRotation(FRotator::ZeroRotator);
-		//bCanGlid = false;
 	}
 }
 
@@ -359,7 +404,8 @@ void ABirdPlayer::NectarGathering()
 	{
 		iInputDelay = 60;
 		bInputEnabled = false;
-		bCanGlid = true;
+		bCanGlide = true;
+		bHasGlided = false;
 	}
 }
 
