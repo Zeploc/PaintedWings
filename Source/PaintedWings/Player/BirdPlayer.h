@@ -72,6 +72,8 @@ protected:
 	void StartJump();
 	void StopJump();
 	void ApplyDoubleJump();
+	float FirstJumpSize;
+	bool HasDoubleJumped = false;
 
 	void Dash();
 	void FinishDash();
@@ -103,6 +105,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jumping")
 		bool DoubleJump = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jumping")
+		float DoubleJumpSize = 500.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dashing")
 		float DashForce = 1000.0f;

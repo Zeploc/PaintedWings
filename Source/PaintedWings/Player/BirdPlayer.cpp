@@ -67,6 +67,7 @@ void ABirdPlayer::BeginPlay()
 	playerCapsuleTrigger = FindComponentByClass<UCapsuleComponent>();
 	playerCapsuleTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapBegin);
 	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
+	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
 }
 
 // Called to bind functionality to input
@@ -133,7 +134,10 @@ void ABirdPlayer::Tick(float DeltaTime)
 			//bCanGlide = false;
 			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Disable Can Glide");
 		}
+		HasDoubleJumped = false;
 	}
+	FString GlideString = bIsGliding ? "True" : "False";
+	GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Purple, "IsGliding: " + GlideString);
 	InputDelayer();
 }
 
@@ -299,15 +303,22 @@ void ABirdPlayer::StartJump()
 {
 	if (!bInputEnabled) return;
 	SwitchGlide(false);
+	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
 	JumpHeld = true;
 	if (GetCharacterMovement()->IsFalling())
 	{
+		if (HasDoubleJumped) return;
 		DoubleJump = true;
+		GetCharacterMovement()->JumpZVelocity = DoubleJumpSize;
+		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %s"), GetCharacterMovement()->JumpZVelocity);
+		GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
 		GetWorldTimerManager().SetTimer(DoubleJumpTimerHandle, this, &ABirdPlayer::ApplyDoubleJump, DoubleJumpDelay, false);
 	}
 	else
 	{
+		GetCharacterMovement()->JumpZVelocity = FirstJumpSize;
+		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %f"), GetCharacterMovement()->JumpZVelocity);
 		Jump();
 	}
 }
@@ -326,6 +337,7 @@ void ABirdPlayer::ApplyDoubleJump()
 	GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
 	Jump();
 	//JumpHeld = true;
+	HasDoubleJumped = true;
 }
 
 void ABirdPlayer::StartGlide()
