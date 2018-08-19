@@ -32,5 +32,10 @@ public:
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* windTrigger;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UArrowComponent* WindDirection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Launch")
+		float LaunchSize = 500.0f;
 };

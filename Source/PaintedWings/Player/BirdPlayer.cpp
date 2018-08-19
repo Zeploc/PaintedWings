@@ -112,7 +112,7 @@ void ABirdPlayer::Tick(float DeltaTime)
 		GetCharacterMovement()->GravityScale = NormalGravity;
 	}
 
-	if(this->GetActorLocation().Z < -100.0f)
+	if(this->GetActorLocation().Z < DeathHeight)
 	{
 		UplayerCheckpointMechanics* CheckpointMech = this->FindComponentByClass<UplayerCheckpointMechanics>();
 		if (CheckpointMech) CheckpointMech->MoveToCurrentCheckpoint();

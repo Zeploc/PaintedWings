@@ -5,25 +5,37 @@
 #include "Engine.h"
 #include "playerCheckpointMechanics.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/ArrowComponent.h"
+
 // Sets default values
 AWindStream::AWindStream()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>("RootComp");
+	/*
 	RootComponent->bEditableWhenInherited = true;
-	RootComponent->RelativeLocation = { 0.0f,0.0f,0.0f };
-	windTrigger = CreateDefaultSubobject<UBoxComponent>("Box");
+	RootComponent->RelativeLocation = { 0.0f,0.0f,0.0f };*/
+	//windTrigger = CreateDefaultSubobject<UBoxComponent>("Box");
+
+	RootComponent = CreateDefaultSubobject<USceneComponent>("RootComp");
+
+	windTrigger = CreateDefaultSubobject<UBoxComponent>("Interact Box");
 	windTrigger->OnComponentBeginOverlap.AddDynamic(this, &AWindStream::OnOverlapBegin);
 	windTrigger->OnComponentEndOverlap.AddDynamic(this, &AWindStream::OnOverlapEnd);
+	windTrigger->SetupAttachment(RootComponent);
 
+	WindDirection = CreateDefaultSubobject<UArrowComponent>("Wind Direction Arrow");
+	WindDirection->SetupAttachment(RootComponent);
+	WindDirection->RelativeRotation.Pitch = 90.0f;
 }
 
 // Called when the game starts or when spawned
 void AWindStream::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Direction = WindDirection->GetForwardVector();
 }
 
 // Called every frame
@@ -37,11 +49,12 @@ void AWindStream::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * 
 {
 	if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
 	{
-		Rotation = GetOwner()->GetActorRotation();
+		/*Rotation = GetOwner()->GetActorRotation();
 		YawRotation = FRotator(0, Rotation.Yaw, 0);
-		Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);*/
 		ACharacter* player = (ACharacter*)OtherActor;
-		player->AddMovementInput(Direction, 50.0f);
+		player->LaunchCharacter(Direction * LaunchSize, false, false);
+		//player->AddMovementInput(Direction, );
 	}
 }
 
