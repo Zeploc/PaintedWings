@@ -122,8 +122,7 @@ public:
 			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
 		float MaxGlideRollRotate = 30.0f;
 
@@ -133,4 +132,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 		float DeathHeight = -150.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hunger")
+		float HungerLevel = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hunger")
+		float HungerLossRate = 0.05f;
 };

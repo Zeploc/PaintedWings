@@ -97,6 +97,12 @@ void ABirdPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	HungerLevel -= HungerLossRate * DeltaTime;
+	if (HungerLevel <= 0.0f)
+	{
+		MoveToCheckpoint();
+	}
+
 	if (bIsGliding)
 	{
 		if (GetVelocity().Z > 0)
@@ -114,9 +120,7 @@ void ABirdPlayer::Tick(float DeltaTime)
 
 	if(this->GetActorLocation().Z < DeathHeight)
 	{
-		UplayerCheckpointMechanics* CheckpointMech = this->FindComponentByClass<UplayerCheckpointMechanics>();
-		if (CheckpointMech) CheckpointMech->MoveToCurrentCheckpoint();
-	
+		MoveToCheckpoint();	
 	}
 	if (GetCharacterMovement()->IsFalling())
 	{
@@ -390,6 +394,7 @@ void ABirdPlayer::MoveToCheckpoint()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Mechanics Script Found"));
 			this->FindComponentByClass<UplayerCheckpointMechanics>()->MoveToCurrentCheckpoint();
+			HungerLevel = 1.0f;
 		}
 	}
 }
@@ -402,6 +407,7 @@ void ABirdPlayer::NectarGathering()
 		bInputEnabled = false;
 		bCanGlide = true;
 		bHasGlided = false;
+		HungerLevel = 1.0f;
 	}
 }
 
