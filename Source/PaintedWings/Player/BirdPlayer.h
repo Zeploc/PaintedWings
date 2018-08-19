@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "BirdPlayer.generated.h"
-
+class UCapsuleComponent;
 UCLASS()
 class PAINTEDWINGS_API ABirdPlayer : public ACharacter
 {
@@ -23,12 +23,14 @@ public:
 
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 		float BaseTurnRate;
 
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 		float BaseLookUpRate;
+	UPROPERTY(EditAnywhere)
+		AActor* CurrentCheckpoint;
 
 protected:
 	// Called when the game starts or when spawned
@@ -53,13 +55,28 @@ protected:
 	void LookUpAtRate(float Rate);
 
 	float NormalGravity;
+
+	float NormalAirControl;
 	
 	FTimerHandle JumpHoldTimerHandle;
+	FTimerHandle DoubleJumpTimerHandle;
+	FTimerHandle DashTimerHandle;
 	void StartGlide();
 	bool JumpHeld = false;
+	bool bCanGlide = true;
+	bool bHasGlided = false;
+	bool bTouchingNectar = false;
 
+	bool bInputEnabled = true;
+	int iInputDelay = 0;
 	void StartJump();
 	void StopJump();
+	void ApplyDoubleJump();
+
+	void Dash();
+	void FinishDash();
+
+	void SwitchGlide(bool IsGliding);
 
 public:	
 	// Called every frame
@@ -67,6 +84,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void MoveToCheckpoint();
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bIsGliding = false;
@@ -75,6 +93,40 @@ public:
 		float GlidingGravity = 0.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float JumpTimeToGlide = 0.2f;
+		float GlidingAirControl = 0.2f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float JumpTimeToGlide = 0.4f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DoubleJumpDelay = 0.1f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DashForce = 1000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DashTimer = 0.6f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsDashing = false;
+
+	void NectarGathering();
+	void InputDelayer();
+	UCapsuleComponent* playerCapsuleTrigger;
+	//overlap events
+	UFUNCTION()
+		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float MaxGlideRollRotate = 30.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float MaxGlidePitchRotate = 20.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool DoubleJump = false;
 };
