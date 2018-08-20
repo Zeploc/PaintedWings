@@ -136,8 +136,6 @@ void ABirdPlayer::Tick(float DeltaTime)
 		}
 		HasDoubleJumped = false;
 	}
-	FString GlideString = bIsGliding ? "True" : "False";
-	GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Purple, "IsGliding: " + GlideString);
 	InputDelayer();
 }
 
