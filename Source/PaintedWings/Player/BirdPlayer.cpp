@@ -498,7 +498,7 @@ void ABirdPlayer::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * Ot
 	}
 }
 
-void ABirdPlayer::SetHasDoubleJumped(bool _b)
+void ABirdPlayer::SetDashAvaliability(bool _b)
 {
 	bCanDash = _b;
 }

@@ -180,5 +180,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hunger")
 		float HungerLossRate = 0.05f;
 
-	void SetHasDoubleJumped(bool _b);
+	void SetDashAvaliability(bool _b);
 };

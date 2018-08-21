@@ -43,7 +43,7 @@ void UJumpResetMechanicsComp::OnOverlapBegin(UPrimitiveComponent * OverlappedCom
 	{
 		player = (ACharacter*)OtherActor;
 		ABirdPlayer* bird = (ABirdPlayer*)player;
-		bird->SetHasDoubleJumped(true); 
+		bird->SetDashAvaliability(true);
 	}
 }
 
