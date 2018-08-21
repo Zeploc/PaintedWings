@@ -3,6 +3,7 @@
 #include "BirdPlayer.h"
 
 #include "playerCheckpointMechanics.h"
+#include "Player/BirdController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -10,6 +11,7 @@
 #include "Engine/World.h"
 #include "Engine.h"
 #include "EngineUtils.h"
+#include "Particles/ParticleSystemComponent.h"
 
 #include "playerCheckpointMechanics.h"
 #include "EngineUtils.h"
@@ -54,20 +56,10 @@ ABirdPlayer::ABirdPlayer()
 	ThirdPersonCamera->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 
 	NormalGravity = GetCharacterMovement()->GravityScale;
-	
-}
 
-// Called when the game starts or when spawned
-void ABirdPlayer::BeginPlay()
-{
-	Super::BeginPlay();
-	NormalGravity = GetCharacterMovement()->GravityScale;
-	NormalAirControl = GetCharacterMovement()->AirControl;	
-
-	playerCapsuleTrigger = FindComponentByClass<UCapsuleComponent>();
-	playerCapsuleTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapBegin);
-	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
-	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
+	DeathParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Death Particle System"));
+	DeathParticleSystem->SetupAttachment(RootComponent);
+	DeathParticleSystem->bAutoActivate = false;
 }
 
 // Called to bind functionality to input
@@ -93,15 +85,30 @@ void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("NectarSuck", IE_Pressed, this, &ABirdPlayer::NectarGathering);
 }
 
+// Called when the game starts or when spawned
+void ABirdPlayer::BeginPlay()
+{
+	Super::BeginPlay();
+	NormalGravity = GetCharacterMovement()->GravityScale;
+	NormalAirControl = GetCharacterMovement()->AirControl;
+
+	playerCapsuleTrigger = FindComponentByClass<UCapsuleComponent>();
+	playerCapsuleTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapBegin);
+	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
+	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
+
+	BirdControllerRef = Cast<ABirdController>(GetController());
+}
+
 // Called every frame
 void ABirdPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	HungerLevel -= HungerLossRate * DeltaTime;
-	if (HungerLevel <= 0.0f)
+	if ((HungerLevel <= 0.0f || GetActorLocation().Z < DeathHeight) && !bRespawning)
 	{
-		MoveToCheckpoint();
+		Respawn();
 	}
 
 	if (bIsGliding)
@@ -119,10 +126,6 @@ void ABirdPlayer::Tick(float DeltaTime)
 		GetCharacterMovement()->GravityScale = NormalGravity;
 	}
 
-	if(this->GetActorLocation().Z < DeathHeight)
-	{
-		MoveToCheckpoint();	
-	}
 	if (GetCharacterMovement()->IsFalling())
 	{
 		DoubleJump = false;
@@ -135,6 +138,7 @@ void ABirdPlayer::Tick(float DeltaTime)
 			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Disable Can Glide");
 		}
 		HasDoubleJumped = false;
+		bCanDash = true;
 	}
 	InputDelayer();
 }
@@ -311,7 +315,8 @@ void ABirdPlayer::StartJump()
 		GetCharacterMovement()->JumpZVelocity = DoubleJumpSize;
 		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %s"), GetCharacterMovement()->JumpZVelocity);
 		GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
-		GetWorldTimerManager().SetTimer(DoubleJumpTimerHandle, this, &ABirdPlayer::ApplyDoubleJump, DoubleJumpDelay, false);
+		if (DoubleJumpDelay > 0) GetWorldTimerManager().SetTimer(DoubleJumpTimerHandle, this, &ABirdPlayer::ApplyDoubleJump, DoubleJumpDelay, false);
+		else ApplyDoubleJump();
 	}
 	else
 	{
@@ -338,6 +343,21 @@ void ABirdPlayer::ApplyDoubleJump()
 	HasDoubleJumped = true;
 }
 
+void ABirdPlayer::Respawn()
+{
+	if (bRespawning) return;
+	// Play Partical Effect
+	// Disable Control
+	// Disable Movement
+	// Invisible
+	//DeathParticleSystem->Activate();
+	bRespawning = true;
+	GetMesh()->SetVisibility(false);
+	GetCharacterMovement()->DisableMovement();
+	bInputEnabled = false;
+	GetWorldTimerManager().SetTimer(RespawnHandle, this, &ABirdPlayer::MoveToCheckpoint, RespawnDelay, false);
+}
+
 void ABirdPlayer::StartGlide()
 {
 	if (!bInputEnabled || !bCanGlide) return;
@@ -351,6 +371,8 @@ void ABirdPlayer::StartGlide()
 
 void ABirdPlayer::Dash()
 {
+	if (!bCanDash) return;
+	bCanDash = false;
 	GetCharacterMovement()->GravityScale = 0.0f;
 	FVector DashDirectionForce = ThirdPersonCamera->GetForwardVector() * DashForce;
 	DashDirectionForce.Z = 0.0f;
@@ -383,6 +405,13 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 		GetCharacterMovement()->GravityScale = GlidingGravity;
 		GetCharacterMovement()->AirControl = GlidingAirControl;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
+		//if (GetVelocity().Z < -GlideCapFallSpeed)
+		//{
+			//GetCharacterMovement()->velocity
+			//GetCapsuleComponent()->ComponentVelocity
+			//FVector CapsuleLinearSpeed = GetCharacterMovement()->velocity->Velocity;
+			//GetCapsuleComponent()->SetPhysicsLinearVelocity()
+		//}
 		//bHasGlided = true;
 	}
 	else
@@ -396,6 +425,7 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 
 void ABirdPlayer::MoveToCheckpoint()
 {
+	GetWorldTimerManager().ClearTimer(RespawnHandle);
 	UE_LOG(LogTemp, Warning, TEXT("Checkpoint Activating"));
 	if (this)
 	{
@@ -403,8 +433,13 @@ void ABirdPlayer::MoveToCheckpoint()
 		if (this->FindComponentByClass<UplayerCheckpointMechanics>())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Mechanics Script Found"));
+			if (BirdControllerRef) BirdControllerRef->RemoveCurrentCollectables();
+			ReplenishRebase();
 			this->FindComponentByClass<UplayerCheckpointMechanics>()->MoveToCurrentCheckpoint();
-			HungerLevel = 1.0f;
+			bInputEnabled = true;
+			GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Walking;
+			GetMesh()->SetVisibility(true);
+			bRespawning = false;
 		}
 	}
 }
@@ -431,6 +466,14 @@ void ABirdPlayer::InputDelayer()
 	{
 		bInputEnabled = true;
 	}
+}
+
+void ABirdPlayer::ReplenishRebase()
+{
+	HungerLevel = 1.0f;
+	if (BirdControllerRef) BirdControllerRef->ConfirmCollectables();
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, "CONTROLLER NOT FOUND");
 }
 
 
