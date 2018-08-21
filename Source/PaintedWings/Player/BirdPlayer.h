@@ -21,6 +21,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class USpringArmComponent* BoomArm;
 
+	UPROPERTY(VisibleAnywhere)
+		class UParticleSystemComponent* DeathParticleSystem;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
@@ -61,6 +63,9 @@ protected:
 	FTimerHandle JumpHoldTimerHandle;
 	FTimerHandle DoubleJumpTimerHandle;
 	FTimerHandle DashTimerHandle;
+	FTimerHandle RespawnHandle;
+	void Respawn();
+	bool bRespawning = false;
 	void StartGlide();
 	bool JumpHeld = false;
 	bool bCanGlide = true;
@@ -77,10 +82,12 @@ protected:
 
 	void Dash();
 	void FinishDash();
+	bool bCanDash = true;
 
 	void SwitchGlide(bool IsGliding);
-
+	
 	class ABirdController* BirdControllerRef;
+
 
 public:	
 	// Called every frame
@@ -101,6 +108,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
 		float JumpTimeToGlide = 0.4f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
+		float GlideCapFallSpeed = 200.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jumping")
 		float DoubleJumpDelay = 0.1f;
@@ -139,6 +149,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 		float DeathHeight = -150.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
+		float RespawnDelay = 2.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hunger")
 		float HungerLevel = 1.0f;
