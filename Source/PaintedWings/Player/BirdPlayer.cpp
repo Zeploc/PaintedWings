@@ -350,7 +350,7 @@ void ABirdPlayer::Respawn()
 	// Disable Control
 	// Disable Movement
 	// Invisible
-	//DeathParticleSystem->Activate();
+	DeathParticleSystem->Activate();
 	bRespawning = true;
 	GetMesh()->SetVisibility(false);
 	GetCharacterMovement()->DisableMovement();

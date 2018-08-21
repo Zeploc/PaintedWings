@@ -21,7 +21,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class USpringArmComponent* BoomArm;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UParticleSystemComponent* DeathParticleSystem;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
