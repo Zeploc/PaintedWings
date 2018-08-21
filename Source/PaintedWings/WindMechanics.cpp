@@ -6,6 +6,7 @@
 #include "playerCheckpointMechanics.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+
 // Sets default values for this component's properties
 UWindMechanics::UWindMechanics()
 {
@@ -14,6 +15,7 @@ UWindMechanics::UWindMechanics()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...RootComponent = CreateDefaultSubobject<USceneComponent>("RootComp");
+
 }
 
 
@@ -22,7 +24,6 @@ void UWindMechanics::BeginPlay()
 {
 	Super::BeginPlay();
 
-	windTrigger = GetOwner()->FindComponentByClass<UBoxComponent>();
 	windTrigger->OnComponentBeginOverlap.AddDynamic(this, &UWindMechanics::OnOverlapBegin);
 	windTrigger->OnComponentEndOverlap.AddDynamic(this, &UWindMechanics::OnOverlapEnd);
 	// ...
@@ -53,11 +54,11 @@ void UWindMechanics::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor
 		FVector forward = FVector(0.0f, 1.0f, 0.0f);
 		YawRotation = FRotator(0, Rotation.Yaw, 0);
 		Direction = GetOwner()->GetActorForwardVector();
-		player = (ACharacter*)OtherActor;
 		Direction.Normalize();
-		Direction.X = Direction.X * 10.0f;
-		Direction.Y = Direction.Y * 10.0f;
-		Direction.Z = Direction.Z * 10.0f;
+		Direction.X = Direction.X * LaunchSize;
+		Direction.Y = Direction.Y * LaunchSize;
+		Direction.Z = Direction.Z * LaunchSize;
+		player = (ACharacter*)OtherActor;
 		player->LaunchCharacter(Direction, false, true);
 	}
 }

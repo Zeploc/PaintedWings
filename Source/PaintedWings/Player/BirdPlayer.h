@@ -21,6 +21,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class USpringArmComponent* BoomArm;
 
+	UPROPERTY(VisibleAnywhere)
+		class UParticleSystemComponent* DeathParticleSystem;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
@@ -61,6 +63,9 @@ protected:
 	FTimerHandle JumpHoldTimerHandle;
 	FTimerHandle DoubleJumpTimerHandle;
 	FTimerHandle DashTimerHandle;
+	FTimerHandle RespawnHandle;
+	void Respawn();
+	bool bRespawning = false;
 	void StartGlide();
 	bool JumpHeld = false;
 	bool bCanGlide = true;
@@ -72,11 +77,17 @@ protected:
 	void StartJump();
 	void StopJump();
 	void ApplyDoubleJump();
+	float FirstJumpSize;
+	bool HasDoubleJumped = false;
 
 	void Dash();
 	void FinishDash();
+	bool bCanDash = true;
 
 	void SwitchGlide(bool IsGliding);
+	
+	class ABirdController* BirdControllerRef;
+
 
 public:	
 	// Called every frame
@@ -86,32 +97,42 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void MoveToCheckpoint();
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Gliding")
 		bool bIsGliding = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
 		float GlidingGravity = 0.2f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
 		float GlidingAirControl = 0.2f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
 		float JumpTimeToGlide = 0.4f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
+		float GlideCapFallSpeed = 200.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jumping")
 		float DoubleJumpDelay = 0.1f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jumping")
+		bool DoubleJump = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jumping")
+		float DoubleJumpSize = 500.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dashing")
 		float DashForce = 1000.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dashing")
 		float DashTimer = 0.6f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dashing")
 		bool IsDashing = false;
 
 	void NectarGathering();
 	void InputDelayer();
+	void ReplenishRebase();
 	UCapsuleComponent* playerCapsuleTrigger;
 	//overlap events
 	UFUNCTION()
@@ -119,14 +140,22 @@ public:
 			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
 		float MaxGlideRollRotate = 30.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
 		float MaxGlidePitchRotate = 20.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
+		float DeathHeight = -150.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool DoubleJump = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
+		float RespawnDelay = 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hunger")
+		float HungerLevel = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hunger")
+		float HungerLossRate = 0.05f;
 };

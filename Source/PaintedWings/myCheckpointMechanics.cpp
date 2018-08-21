@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "playerCheckpointMechanics.h"
 #include "Engine.h"
+#include "Player/BirdPlayer.h"
 
 // Sets default values for this component's properties
 AmyCheckpointMechanics::AmyCheckpointMechanics()
@@ -52,6 +53,11 @@ void AmyCheckpointMechanics::OnOverlapBegin(UPrimitiveComponent * OverlappedComp
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Overlap Occuring"));
 			OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>()->m_pCurrentCheckpoint = this;
+			ABirdPlayer* PlayerRef = Cast<ABirdPlayer>(OtherActor);
+			if (PlayerRef)
+			{
+				PlayerRef->ReplenishRebase();
+			}
 		}
 	}
 }
