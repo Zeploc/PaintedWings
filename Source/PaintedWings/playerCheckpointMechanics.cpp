@@ -44,4 +44,3 @@ void UplayerCheckpointMechanics::MoveToCurrentCheckpoint()
 		GetOwner()->SetActorLocation(m_pCurrentCheckpoint->GetActorLocation());
 	}
 }
-
