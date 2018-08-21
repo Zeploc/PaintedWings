@@ -2,11 +2,12 @@
 
 #include "JumpResetMechanicsComp.h"
 #include "playerCheckpointMechanics.h"
-#include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 #include "Engine.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
+#include "Player/BirdPlayer.h"
 // Sets default values for this component's properties
 UJumpResetMechanicsComp::UJumpResetMechanicsComp()
 {
@@ -22,8 +23,7 @@ UJumpResetMechanicsComp::UJumpResetMechanicsComp()
 void UJumpResetMechanicsComp::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
+	TriggerSphere = GetOwner()->FindComponentByClass<USphereComponent>();
 	TriggerSphere->OnComponentBeginOverlap.AddDynamic(this, &UJumpResetMechanicsComp::OnOverlapBegin);
 	TriggerSphere->OnComponentEndOverlap.AddDynamic(this, &UJumpResetMechanicsComp::OnOverlapEnd);
 }
@@ -41,7 +41,9 @@ void UJumpResetMechanicsComp::OnOverlapBegin(UPrimitiveComponent * OverlappedCom
 {
 	if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
 	{
-
+		player = (ACharacter*)OtherActor;
+		ABirdPlayer* bird = (ABirdPlayer*)player;
+		bird->SetHasDoubleJumped(true); 
 	}
 }
 
