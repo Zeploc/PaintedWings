@@ -80,6 +80,8 @@ protected:
 
 	void SwitchGlide(bool IsGliding);
 
+	class ABirdController* BirdControllerRef;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -120,6 +122,7 @@ public:
 
 	void NectarGathering();
 	void InputDelayer();
+	void ReplenishRebase();
 	UCapsuleComponent* playerCapsuleTrigger;
 	//overlap events
 	UFUNCTION()

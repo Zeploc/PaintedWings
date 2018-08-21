@@ -3,6 +3,7 @@
 #include "BirdPlayer.h"
 
 #include "playerCheckpointMechanics.h"
+#include "Player/BirdController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -57,19 +58,6 @@ ABirdPlayer::ABirdPlayer()
 	
 }
 
-// Called when the game starts or when spawned
-void ABirdPlayer::BeginPlay()
-{
-	Super::BeginPlay();
-	NormalGravity = GetCharacterMovement()->GravityScale;
-	NormalAirControl = GetCharacterMovement()->AirControl;	
-
-	playerCapsuleTrigger = FindComponentByClass<UCapsuleComponent>();
-	playerCapsuleTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapBegin);
-	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
-	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
-}
-
 // Called to bind functionality to input
 void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -91,6 +79,21 @@ void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABirdPlayer::LookUpAtRate);
 	PlayerInputComponent->BindAction("Respawn", IE_Pressed, this, &ABirdPlayer::MoveToCheckpoint);
 	PlayerInputComponent->BindAction("NectarSuck", IE_Pressed, this, &ABirdPlayer::NectarGathering);
+}
+
+// Called when the game starts or when spawned
+void ABirdPlayer::BeginPlay()
+{
+	Super::BeginPlay();
+	NormalGravity = GetCharacterMovement()->GravityScale;
+	NormalAirControl = GetCharacterMovement()->AirControl;
+
+	playerCapsuleTrigger = FindComponentByClass<UCapsuleComponent>();
+	playerCapsuleTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapBegin);
+	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
+	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
+
+	BirdControllerRef = Cast<ABirdController>(GetController());
 }
 
 // Called every frame
@@ -403,8 +406,9 @@ void ABirdPlayer::MoveToCheckpoint()
 		if (this->FindComponentByClass<UplayerCheckpointMechanics>())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Mechanics Script Found"));
+			if (BirdControllerRef) BirdControllerRef->RemoveCurrentCollectables();
+			ReplenishRebase();
 			this->FindComponentByClass<UplayerCheckpointMechanics>()->MoveToCurrentCheckpoint();
-			HungerLevel = 1.0f;
 		}
 	}
 }
@@ -431,6 +435,14 @@ void ABirdPlayer::InputDelayer()
 	{
 		bInputEnabled = true;
 	}
+}
+
+void ABirdPlayer::ReplenishRebase()
+{
+	HungerLevel = 1.0f;
+	if (BirdControllerRef) BirdControllerRef->ConfirmCollectables();
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, "CONTROLLER NOT FOUND");
 }
 
 

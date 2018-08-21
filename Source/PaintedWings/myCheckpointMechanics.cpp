@@ -56,7 +56,7 @@ void AmyCheckpointMechanics::OnOverlapBegin(UPrimitiveComponent * OverlappedComp
 			ABirdPlayer* PlayerRef = Cast<ABirdPlayer>(OtherActor);
 			if (PlayerRef)
 			{
-				PlayerRef->HungerLevel = 1.0f;
+				PlayerRef->ReplenishRebase();
 			}
 		}
 	}
