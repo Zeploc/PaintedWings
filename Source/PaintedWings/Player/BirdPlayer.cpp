@@ -3,6 +3,7 @@
 #include "BirdPlayer.h"
 
 #include "playerCheckpointMechanics.h"
+#include "Player/BirdController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -57,18 +58,6 @@ ABirdPlayer::ABirdPlayer()
 	
 }
 
-// Called when the game starts or when spawned
-void ABirdPlayer::BeginPlay()
-{
-	Super::BeginPlay();
-	NormalGravity = GetCharacterMovement()->GravityScale;
-	NormalAirControl = GetCharacterMovement()->AirControl;	
-
-	playerCapsuleTrigger = FindComponentByClass<UCapsuleComponent>();
-	playerCapsuleTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapBegin);
-	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
-}
-
 // Called to bind functionality to input
 void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -90,6 +79,21 @@ void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABirdPlayer::LookUpAtRate);
 	PlayerInputComponent->BindAction("Respawn", IE_Pressed, this, &ABirdPlayer::MoveToCheckpoint);
 	PlayerInputComponent->BindAction("NectarSuck", IE_Pressed, this, &ABirdPlayer::NectarGathering);
+}
+
+// Called when the game starts or when spawned
+void ABirdPlayer::BeginPlay()
+{
+	Super::BeginPlay();
+	NormalGravity = GetCharacterMovement()->GravityScale;
+	NormalAirControl = GetCharacterMovement()->AirControl;
+
+	playerCapsuleTrigger = FindComponentByClass<UCapsuleComponent>();
+	playerCapsuleTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapBegin);
+	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
+	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
+
+	BirdControllerRef = Cast<ABirdController>(GetController());
 }
 
 // Called every frame
@@ -133,6 +137,7 @@ void ABirdPlayer::Tick(float DeltaTime)
 			//bCanGlide = false;
 			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Disable Can Glide");
 		}
+		HasDoubleJumped = false;
 	}
 	InputDelayer();
 }
@@ -299,15 +304,22 @@ void ABirdPlayer::StartJump()
 {
 	if (!bInputEnabled) return;
 	SwitchGlide(false);
+	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
 	JumpHeld = true;
 	if (GetCharacterMovement()->IsFalling())
 	{
+		if (HasDoubleJumped) return;
 		DoubleJump = true;
+		GetCharacterMovement()->JumpZVelocity = DoubleJumpSize;
+		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %s"), GetCharacterMovement()->JumpZVelocity);
+		GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
 		GetWorldTimerManager().SetTimer(DoubleJumpTimerHandle, this, &ABirdPlayer::ApplyDoubleJump, DoubleJumpDelay, false);
 	}
 	else
 	{
+		GetCharacterMovement()->JumpZVelocity = FirstJumpSize;
+		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %f"), GetCharacterMovement()->JumpZVelocity);
 		Jump();
 	}
 }
@@ -326,6 +338,7 @@ void ABirdPlayer::ApplyDoubleJump()
 	GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
 	Jump();
 	//JumpHeld = true;
+	HasDoubleJumped = true;
 }
 
 void ABirdPlayer::StartGlide()
@@ -393,8 +406,9 @@ void ABirdPlayer::MoveToCheckpoint()
 		if (this->FindComponentByClass<UplayerCheckpointMechanics>())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Mechanics Script Found"));
+			if (BirdControllerRef) BirdControllerRef->RemoveCurrentCollectables();
+			ReplenishRebase();
 			this->FindComponentByClass<UplayerCheckpointMechanics>()->MoveToCurrentCheckpoint();
-			HungerLevel = 1.0f;
 		}
 	}
 }
@@ -421,6 +435,14 @@ void ABirdPlayer::InputDelayer()
 	{
 		bInputEnabled = true;
 	}
+}
+
+void ABirdPlayer::ReplenishRebase()
+{
+	HungerLevel = 1.0f;
+	if (BirdControllerRef) BirdControllerRef->ConfirmCollectables();
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, "CONTROLLER NOT FOUND");
 }
 
 
