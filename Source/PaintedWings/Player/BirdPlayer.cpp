@@ -98,6 +98,8 @@ void ABirdPlayer::BeginPlay()
 	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
 
 	BirdControllerRef = Cast<ABirdController>(GetController());
+
+	UGameplayStatics::PlaySound2D(GetWorld(), SoundBGM,1.0f,1.0f,1.0f);
 }
 
 // Called every frame
@@ -308,6 +310,9 @@ void ABirdPlayer::StartJump()
 	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
 	JumpHeld = true;
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Flap1, this->GetActorLocation(),1.0f, 1.0f, 0.0f);
+
 	if (GetCharacterMovement()->IsFalling())
 	{
 		if (HasDoubleJumped) return;
@@ -491,4 +496,9 @@ void ABirdPlayer::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * Ot
 	{
 		bTouchingNectar = false;
 	}
+}
+
+void ABirdPlayer::SetDashAvaliability(bool _b)
+{
+	bCanDash = _b;
 }
