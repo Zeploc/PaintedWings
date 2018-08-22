@@ -18,6 +18,11 @@ public:
 	// Sets default values for this actor's properties
 	ABirdController();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* SoundBGM;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* SoundBGM2;
+
 public:
 	void AddCollectablePoint(class ACollectable* Col);
 	void ConfirmCollectables();

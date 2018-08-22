@@ -6,6 +6,7 @@
 #include "Level Mechanics Objects/Collectable.h"
 #include "Engine/World.h"
 #include "GameFramework/GameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABirdController::ABirdController()
@@ -22,6 +23,7 @@ void ABirdController::BeginPlay()
 	Super::BeginPlay();
 
 	BirdPlayerRef = Cast<ABirdPlayer>(GetCharacter());
+	UGameplayStatics::PlaySound2D(GetWorld(), SoundBGM);
 }
 
 void ABirdController::ConfirmCollectables()

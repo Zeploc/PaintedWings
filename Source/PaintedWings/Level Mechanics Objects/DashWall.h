@@ -25,8 +25,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void DeathSequence(float Timepased);
-	bool bBroken = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool bBroken = false;
+
 	float timer = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		float DestroyTime = 0.3f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkeletalMesh")
 		USkeletalMeshComponent* Web;

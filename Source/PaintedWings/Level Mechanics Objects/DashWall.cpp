@@ -61,7 +61,7 @@ void ADashWall::Tick(float DeltaTime)
 void ADashWall::DeathSequence(float Timepased)
 {
 	timer += Timepased;
-	if (timer > 2.0f)
+	if (timer > DestroyTime)
 	{
 		Destroy();
 	}

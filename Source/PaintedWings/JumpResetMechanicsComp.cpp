@@ -51,11 +51,10 @@ void UJumpResetMechanicsComp::TickComponent(float DeltaTime, ELevelTick TickType
 
 void UJumpResetMechanicsComp::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
+	if (Cast<ABirdPlayer>(OtherActor)) //OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DashReset"));
-		player = (ACharacter*)OtherActor;
-		ABirdPlayer* bird = (ABirdPlayer*)player;
+		ABirdPlayer* bird = (ABirdPlayer*)OtherActor;
 		bird->SetDashAvaliability(true);
 		GetOwner()->SetActorLocation(FVector(1000,1000,1000));
 		TimeUsed = CurrentTime;

@@ -42,12 +42,12 @@ void AWindStream::BeginPlay()
 void AWindStream::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (bInside)
+	/*if (bInside)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("WindStream"));
 		if (bStream) { LaunchSize = StreamSize; };
 		player->LaunchCharacter(Direction * LaunchSize, false, false);
-	}
+	}*/
 
 }
 
@@ -59,7 +59,7 @@ void AWindStream::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * 
 		YawRotation = FRotator(0, Rotation.Yaw, 0);
 		Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);*/
 		ACharacter* player = (ACharacter*)OtherActor;
-		player->LaunchCharacter(Direction * LaunchSize, true, true);
+		player->LaunchCharacter(Direction * LaunchSize, false, true);
 
 		/*player = (ACharacter*)OtherActor;
 		if (bStream)

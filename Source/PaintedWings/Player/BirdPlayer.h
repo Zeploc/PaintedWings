@@ -90,10 +90,6 @@ protected:
 	
 	class ABirdController* BirdControllerRef;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* SoundBGM;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* SoundBGM2;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 		USoundBase* SoundAmbience;
@@ -189,6 +185,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hunger")
 		float HungerLossRate = 0.05f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Hunger")
+		bool GettingNectar = false;
 
 	void SetDashAvaliability(bool _b);
 

@@ -103,7 +103,6 @@ void ABirdPlayer::BeginPlay()
 	BirdControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
 	if (!BirdControllerRef)
 		UE_LOG(LogTemp, Warning, TEXT("Uh oh NO CONTROLLER"));
-	UGameplayStatics::PlaySound2D(GetWorld(), SoundBGM,1.0f,1.0f,1.0f);
 }
 
 // Called every frame
@@ -501,6 +500,7 @@ void ABirdPlayer::NectarGathering()
 		bCanGlide = true;
 		bHasGlided = false;
 		HungerLevel = 1.0f;
+		GettingNectar = true;
 	}
 }
 
@@ -509,10 +509,12 @@ void ABirdPlayer::InputDelayer()
 	if (iInputDelay >= 0)
 	{
 		iInputDelay--;
+		HungerLevel = 1.0f;
 	}
 	else
 	{
 		bInputEnabled = true;
+		GettingNectar = false;
 	}
 }
 
