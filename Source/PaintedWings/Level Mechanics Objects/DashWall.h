@@ -31,6 +31,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkeletalMesh")
 		USkeletalMeshComponent* Web;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		class UBoxComponent* CollisionBox;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MinimumSpeed = 800.0f;
 

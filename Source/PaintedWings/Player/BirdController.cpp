@@ -56,6 +56,7 @@ void ABirdController::Respawn()
 void ABirdController::AddNewCheckpoint(AActor * NewCheckpoint)
 {
 	CurrentCheckpoint = NewCheckpoint;
+	Cast<ABirdPlayer>(GetCharacter())->ReplenishRebase();
 	UE_LOG(LogTemp, Warning, TEXT("New checkpoint set %s"), *NewCheckpoint->GetFName().ToString());
 }
 

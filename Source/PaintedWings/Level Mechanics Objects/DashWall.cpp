@@ -6,6 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Player/BirdPlayer.h"
 #include "Player/BirdController.h"
+#include "Components/BoxComponent.h"
 
 #include "Engine.h"
 
@@ -16,11 +17,12 @@ ADashWall::ADashWall()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Web = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Web Mesh"));
+	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Web Collision"));
 	SetRootComponent(Web);
 
 
 	//Web->OnComponentHit.AddDynamic(this, &ADashWall::OnCompHit);
-	Web->OnComponentBeginOverlap.AddDynamic(this, &ADashWall::OnCompOverlap);
+	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ADashWall::OnCompOverlap);
 }
 
 // Called when the game starts or when spawned
@@ -36,20 +38,23 @@ void ADashWall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 		
-	ABirdPlayer* PlayerRef = Cast<ABirdPlayer>(PlayerControllerRef->GetCharacter());
-	FVector XYSpeed = PlayerRef->GetVelocity();
-	XYSpeed.Y = 0.0f;
-	if (FVector::Distance(PlayerRef->GetActorLocation(), GetActorLocation()) < 500.0f && PlayerRef->IsDashing && XYSpeed.Size() > MinimumSpeed)
-	{
-		Web->SetCollisionProfileName("OverlapAll");
-	}
-	else
-	{
-		if (Web->GetCollisionProfileName() != "BlockAll") Web->SetCollisionProfileName("BlockAll");
-	}
 	if (bBroken)
 	{
 		DeathSequence(DeltaTime);
+	}
+	else
+	{
+		ABirdPlayer* PlayerRef = Cast<ABirdPlayer>(PlayerControllerRef->GetCharacter());
+		FVector XYSpeed = PlayerRef->GetVelocity();
+		XYSpeed.Y = 0.0f;
+		if (FVector::Distance(PlayerRef->GetActorLocation(), GetActorLocation()) < 500.0f && PlayerRef->IsDashing && XYSpeed.Size() > MinimumSpeed)
+		{
+			CollisionBox->SetCollisionProfileName("OverlapAll");
+		}
+		else
+		{
+			if (CollisionBox->GetCollisionProfileName() != "BlockAll") CollisionBox->SetCollisionProfileName("BlockAll");
+		}
 	}
 }
 
@@ -70,6 +75,7 @@ void ADashWall::OnCompOverlap(class UPrimitiveComponent* OverlappedComp, class A
 		if (BirdPlayerRef->IsDashing)
 		{
 			bBroken = true;
+			CollisionBox->SetCollisionProfileName("OverlapAll");
 		}
 	}
 }
