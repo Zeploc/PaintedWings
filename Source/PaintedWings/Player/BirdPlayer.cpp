@@ -131,8 +131,15 @@ void ABirdPlayer::Tick(float DeltaTime)
 	}
 	else
 	{
-		GetCharacterMovement()->GravityScale = NormalGravity;
-		GetCharacterMovement()->RotationRate.Yaw = NormalRotationRate;
+		if (IsDashing)
+		{
+			GetCharacterMovement()->GravityScale = 0.0f;
+		}
+		else
+		{
+			GetCharacterMovement()->GravityScale = NormalGravity;
+			GetCharacterMovement()->RotationRate.Yaw = NormalRotationRate;
+		}
 	}
 
 	if (GetCharacterMovement()->IsFalling())
@@ -184,95 +191,6 @@ void ABirdPlayer::MoveForward(float Value)
 	if (!bInputEnabled) return;
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-		if (bIsGliding)
-		{			
-			/*FVector CameraForward = ThirdPersonCamera->GetForwardVector();
-			CameraForward.Y = 0.0f;
-			UE_LOG(LogTemp, Warning, TEXT("Before %s"), *Rotation.ToString());
-			Rotation.Pitch -= Value;
-			Rotation.Pitch = FMath::Clamp(Rotation.Pitch, -MaxGlidePitchRotate, MaxGlidePitchRotate);
-			UE_LOG(LogTemp, Warning, TEXT("After %s"), *Rotation.ToString());
-
-			GetMesh()->SetRelativeRotation(Rotation);*/
-
-
-			/*FVector CameraForward = ThirdPersonCamera->GetRightVector();
-			CameraForward.Y = 0.0f;
-
-			FVector DirectionVector = CameraForward.RotateAngleAxis(Value, FVector(0, 1, 0));
-			FRotator DirectionRotation = DirectionVector.Rotation();
-
-			FRotator Rotation = GetMesh()->GetComponentRotation();
-
-			Rotation += DirectionRotation;
-			Rotation.Pitch = FMath::Clamp(Rotation.Pitch, -MaxGlidePitchRotate, MaxGlidePitchRotate);*/
-
-			//FRotator CameraRotation = CameraForward.Rotation();
-			//CameraRotation.Pitch = 0.0f;
-			//Rotation.RotateVector(CameraForward);
-
-			//FRotator CameraRotation = CameraForward.Rotation();
-			//CameraRotation.Pitch = 0.0f;
-
-			//UE_LOG(LogTemp, Warning, TEXT("Camera Rot %s"), *CameraRotation.ToString());
-
-			////FRotator Rotation = GetMesh()->RelativeRotation;
-			//CameraRotation.Pitch -= Value * MaxGlideRollRotate;
-			//CameraRotation.Pitch = FMath::Clamp(CameraRotation.Pitch, -MaxGlidePitchRotate, MaxGlidePitchRotate);
-			//CameraRotation.Yaw = GetMesh()->GetComponentRotation().Yaw;
-
-
-			//FRotator RotationApply;
-			//RotationApply.Pitch = MaxGlidePitchRotate * Value;
-
-			//FVector CameraForward = ThirdPersonCamera->GetForwardVector();
-			//CameraForward.Y = 0.0f;
-			//CameraForward.Y = Value * MaxGlidePitchRotate;
-
-			/*FVector CamRot = RotationApply.RotateVector(CameraForward);
-			FRotator DirectionRotation = CamRot.Rotation();*/
-
-			//FQuat NewCamQuat = CameraForward.ToOrientationQuat();
-			//FRotator NewCameraRotation =  ThirdPersonCamera->RelativeRotation;// CameraForward.ToOrientationRotator();// .Rotation();
-			//NewCameraRotation.Pitch = Value * MaxGlidePitchRotate;
-
-			/*CameraForward.Y = 0.0f;
-			
-			FRotator CamDir = ThirdPersonCamera->GetForwardVector().Rotation();
-			CamDir.Pitch = 0.0f;
-			CamDir.Roll = 0.0f;
-
-
-			
-			FVector RotatedVector = RotationApply.RotateVector(ThirdPersonCamera->GetForwardVector());
-			FRotator Rotated = RotatedVector.Rotation(); 
-			Rotated.Yaw = GetCapsuleComponent()->RelativeRotation.Yaw;
-			
-
-			CameraForward.RotateAngleAxis(Value * MaxGlidePitchRotate, FVector(1, 0, 0));
-
-			FRotator DirectionRotation = CameraForward.Rotation();
-			FVector VCamDir = CamDir.Vector();
-			VCamDir = DirectionRotation.RotateVector(VCamDir);
-			FRotator NewRotation = Rotation;
-			NewRotation.Pitch = VCamDir.X * MaxGlidePitchRotate * Value;
-			NewRotation.Roll = VCamDir.Y * MaxGlidePitchRotate * Value;*/
-			//DirectionRotation.Pitch = 0.0f;
-			//DirectionRotation -= Rotation;
-			//DirectionRotation.Pitch += Value * MaxGlidePitchRotate;
-
-			//DirectionRotation.RotateVector(GetMesh()->GetRightVector());
-
-
-			//UE_LOG(LogTemp, Warning, TEXT("Camera Rot %s"), *NewCamQuat.ToString());
-
-			//GetMesh()->SetWorldRotation(Rotated);
-			//GetMesh()->SetWorldRotation(CameraForward.Rotation());
-			//FRotator MeshLocalRot = GetMesh()->RelativeRotation;
-			//MeshLocalRot.Yaw = 0.0f;
-			//GetMesh()->SetRelativeRotation(MeshLocalRot);
-		}
-
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 		// get forward vector
@@ -288,25 +206,6 @@ void ABirdPlayer::MoveRight(float Value)
 	if (!bInputEnabled) return;
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-		if (bIsGliding)
-		{
-			//FVector CameraForward = ThirdPersonCamera->GetForwardVector();
-			//CameraForward.Y = 0.0f;
-
-			//FRotator CameraRotation = CameraForward.Rotation();
-
-			////FRotator Rotation = GetMesh()->RelativeRotation;
-			////UE_LOG(LogTemp, Warning, TEXT("Before %s"), *Rotation.ToString());
-			//CameraRotation.Roll += Value * MaxGlideRollRotate;
-			//CameraRotation.Roll = FMath::Clamp(CameraRotation.Roll, -MaxGlideRollRotate, MaxGlideRollRotate);
-
-			//GetMesh()->SetWorldRotation(CameraRotation);
-			//UE_LOG(LogTemp, Warning, TEXT("After %s"), *Rotation.ToString());
-
-			//GetMesh()->SetRelativeRotation(Rotation);
-			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Purple, Rotation.ToString());
-		}
-
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
