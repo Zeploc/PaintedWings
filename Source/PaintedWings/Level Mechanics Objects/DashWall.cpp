@@ -3,6 +3,7 @@
 #include "DashWall.h"
 
 #include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Player/BirdPlayer.h"
 
 #include "Engine.h"
@@ -13,7 +14,7 @@ ADashWall::ADashWall()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Web = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Web Mesh"));
+	Web = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Web Mesh"));
 	SetRootComponent(Web);
 
 
@@ -44,6 +45,19 @@ void ADashWall::Tick(float DeltaTime)
 	{
 		if (Web->GetCollisionProfileName() != "BlockAll") Web->SetCollisionProfileName("BlockAll");
 	}
+	if (bBroken)
+	{
+		DeathSequence(DeltaTime);
+	}
+}
+
+void ADashWall::DeathSequence(float Timepased)
+{
+	timer += Timepased;
+	if (timer > 2.0f)
+	{
+		Destroy();
+	}
 }
 
 void ADashWall::OnCompOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -53,7 +67,7 @@ void ADashWall::OnCompOverlap(class UPrimitiveComponent* OverlappedComp, class A
 	{
 		if (BirdPlayerRef->IsDashing)
 		{
-			Destroy();
+			bBroken = true;
 		}
 	}
 }
