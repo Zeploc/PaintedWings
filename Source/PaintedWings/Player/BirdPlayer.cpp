@@ -56,6 +56,7 @@ ABirdPlayer::ABirdPlayer()
 	ThirdPersonCamera->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 
 	NormalGravity = GetCharacterMovement()->GravityScale;
+	NormalRotationRate = GetCharacterMovement()->RotationRate.Yaw;
 
 	DeathParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Death Particle System"));
 	DeathParticleSystem->SetupAttachment(RootComponent);
@@ -121,11 +122,15 @@ void ABirdPlayer::Tick(float DeltaTime)
 		}
 		else
 			GetCharacterMovement()->GravityScale = GlidingGravity;
+
+		GetCharacterMovement()->RotationRate.Yaw = GlideRotationRate;
+		
 		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "GLIDING");
 	}
 	else
 	{
 		GetCharacterMovement()->GravityScale = NormalGravity;
+		GetCharacterMovement()->RotationRate.Yaw = NormalRotationRate;
 	}
 
 	if (GetCharacterMovement()->IsFalling())
@@ -141,6 +146,7 @@ void ABirdPlayer::Tick(float DeltaTime)
 		}
 		HasDoubleJumped = false;
 		bCanDash = true;
+		if (bIsGliding) SwitchGlide(false);
 	}
 	InputDelayer();
 }
@@ -164,11 +170,18 @@ void ABirdPlayer::LookUpAtRate(float Rate)
 
 void ABirdPlayer::MoveForward(float Value)
 {
+	// find out which way is forward
+	const FRotator Rotation = Controller->GetControlRotation();
+	if (bIsGliding && Value >= 0)
+	{
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, 1);
+	}
+
 	if (!bInputEnabled) return;
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
 		if (bIsGliding)
 		{			
 			/*FVector CameraForward = ThirdPersonCamera->GetForwardVector();
@@ -360,6 +373,10 @@ void ABirdPlayer::Respawn()
 	GetMesh()->SetVisibility(false);
 	GetCharacterMovement()->DisableMovement();
 	bInputEnabled = false;
+	//BirdControllerRef->SetViewTargetWithBlend(this, 0.1f, EViewTargetBlendFunction::VTBlend_EaseIn, 0.5f, true);
+	//BirdControllerRef->bAutoManageActiveCameraTarget = false;
+	//GetCapsuleComponent()->SetSimulatePhysics(true);
+	//GetController()->UnPossess();
 	GetWorldTimerManager().SetTimer(RespawnHandle, this, &ABirdPlayer::MoveToCheckpoint, RespawnDelay, false);
 }
 
@@ -389,6 +406,7 @@ void ABirdPlayer::Dash()
 	FRotator Rotation = Controller->GetControlRotation();
 	Rotation.Yaw = DashDirectionForce.Rotation().Yaw;
 	Controller->SetControlRotation(Rotation);
+	GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
 void ABirdPlayer::FinishDash()
@@ -400,6 +418,7 @@ void ABirdPlayer::FinishDash()
 	FRotator Rotation = GetMesh()->RelativeRotation;
 	Rotation.Roll = 0.0f;
 	GetMesh()->RelativeRotation = Rotation;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void ABirdPlayer::SwitchGlide(bool IsGliding)
@@ -408,8 +427,9 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 	if (bIsGliding)
 	{
 		GetCharacterMovement()->GravityScale = GlidingGravity;
+		GetCharacterMovement()->RotationRate.Yaw = GlideRotationRate;
 		GetCharacterMovement()->AirControl = GlidingAirControl;
-		GetCharacterMovement()->bOrientRotationToMovement = false;
+		//GetCharacterMovement()->bOrientRotationToMovement = false;
 		//if (GetVelocity().Z < -GlideCapFallSpeed)
 		//{
 			//GetCharacterMovement()->velocity
@@ -422,8 +442,9 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 	else
 	{
 		GetCharacterMovement()->GravityScale = NormalGravity;
+		GetCharacterMovement()->RotationRate.Yaw = NormalRotationRate;
 		GetCharacterMovement()->AirControl = NormalAirControl;
-		GetCharacterMovement()->bOrientRotationToMovement = true;
+		//GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetMesh()->SetRelativeRotation(FRotator::ZeroRotator);
 	}
 }
@@ -438,9 +459,15 @@ void ABirdPlayer::MoveToCheckpoint()
 		if (this->FindComponentByClass<UplayerCheckpointMechanics>())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Mechanics Script Found"));
-			if (BirdControllerRef) BirdControllerRef->RemoveCurrentCollectables();
+			if (BirdControllerRef)
+			{
+				BirdControllerRef->RemoveCurrentCollectables();
+				BirdControllerRef->Possess(this);
+			}
+
 			ReplenishRebase();
 			this->FindComponentByClass<UplayerCheckpointMechanics>()->MoveToCurrentCheckpoint();
+			//GetCapsuleComponent()->SetSimulatePhysics(false);
 			bInputEnabled = true;
 			GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Walking;
 			GetMesh()->SetVisibility(true);

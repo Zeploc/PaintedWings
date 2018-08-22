@@ -22,6 +22,8 @@ public:
 	void AddCollectablePoint(class ACollectable* Col);
 	void ConfirmCollectables();
 	void RemoveCurrentCollectables();
+	void DeathCam();
+
 
 	UFUNCTION(BlueprintCallable)
 		int GetCollectableCount();

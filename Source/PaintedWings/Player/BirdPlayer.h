@@ -57,7 +57,7 @@ protected:
 	void LookUpAtRate(float Rate);
 
 	float NormalGravity;
-
+	float NormalRotationRate;
 	float NormalAirControl;
 	
 	FTimerHandle JumpHoldTimerHandle;
@@ -132,6 +132,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
 		float GlideCapFallSpeed = 200.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gliding")
+		float GlideRotationRate = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jumping")
 		float DoubleJumpDelay = 0.1f;

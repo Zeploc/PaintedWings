@@ -43,6 +43,13 @@ void ABirdController::RemoveCurrentCollectables()
 	CurrentCollectables.Empty();
 }
 
+void ABirdController::DeathCam()
+{
+	SetViewTargetWithBlend(this, 0.1f, EViewTargetBlendFunction::VTBlend_EaseIn, 0.0f, true);
+	bAutoManageActiveCameraTarget = false;
+	UnPossess();
+}
+
 void ABirdController::AddCollectablePoint(class ACollectable* Col)
 {
 	if (!CurrentCollectables.Contains(Col))
