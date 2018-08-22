@@ -23,9 +23,12 @@ UJumpResetMechanicsComp::UJumpResetMechanicsComp()
 void UJumpResetMechanicsComp::BeginPlay()
 {
 	Super::BeginPlay();
+	SpawnLoc = GetOwner()->GetActorLocation();
 	TriggerSphere = GetOwner()->FindComponentByClass<USphereComponent>();
 	TriggerSphere->OnComponentBeginOverlap.AddDynamic(this, &UJumpResetMechanicsComp::OnOverlapBegin);
 	TriggerSphere->OnComponentEndOverlap.AddDynamic(this, &UJumpResetMechanicsComp::OnOverlapEnd);
+	TimeUsed = 0.0f;
+	CurrentTime = 0.0f;
 }
 
 
@@ -33,7 +36,16 @@ void UJumpResetMechanicsComp::BeginPlay()
 void UJumpResetMechanicsComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	CurrentTime += DeltaTime;
+	if (bGone)
+	{
+		if (CurrentTime - TimeUsed >= 3.0f)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("DashLocReset"));
+			bGone = !bGone;
+			GetOwner()->SetActorLocation(SpawnLoc);
+		}
+	}
 	// ...
 }
 
@@ -41,9 +53,13 @@ void UJumpResetMechanicsComp::OnOverlapBegin(UPrimitiveComponent * OverlappedCom
 {
 	if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("DashReset"));
 		player = (ACharacter*)OtherActor;
 		ABirdPlayer* bird = (ABirdPlayer*)player;
 		bird->SetDashAvaliability(true);
+		GetOwner()->SetActorLocation(FVector(1000,1000,1000));
+		TimeUsed = CurrentTime;
+		bGone = true;
 	}
 }
 

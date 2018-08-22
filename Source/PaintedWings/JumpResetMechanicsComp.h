@@ -33,6 +33,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TriggerCollider")
 		USphereComponent* TriggerSphere;
+	float TimeUsed;
+	float CurrentTime;
+	bool bGone;
+	FVector SpawnLoc;
 		
 	bool bInTrigger;
 	ACharacter* player;
