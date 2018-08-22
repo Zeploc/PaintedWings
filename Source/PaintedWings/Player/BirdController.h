@@ -22,7 +22,8 @@ public:
 	void AddCollectablePoint(class ACollectable* Col);
 	void ConfirmCollectables();
 	void RemoveCurrentCollectables();
-	void DeathCam();
+	void Respawn();
+	void AddNewCheckpoint(AActor* NewCheckpoint);
 
 
 	UFUNCTION(BlueprintCallable)
@@ -36,4 +37,7 @@ protected:
 	
 	int CollectableCount;
 	TArray<ACollectable*> CurrentCollectables;
+
+	UPROPERTY(EditAnywhere)
+		AActor* CurrentCheckpoint;
 };

@@ -6,6 +6,7 @@
 #include "playerCheckpointMechanics.h"
 #include "Engine.h"
 #include "Player/BirdPlayer.h"
+#include "Player/BirdController.h"
 
 // Sets default values for this component's properties
 AmyCheckpointMechanics::AmyCheckpointMechanics()
@@ -46,10 +47,11 @@ void AmyCheckpointMechanics::Tick(float DeltaTime)
 
 void AmyCheckpointMechanics::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (OtherComp)
+	if (Cast<ABirdPlayer>(OtherActor))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Overlap Occuring"));
-		if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
+		UE_LOG(LogTemp, Warning, TEXT("Saving Spawn Point"));
+		Cast<ABirdController>(GetWorld()->GetFirstPlayerController())->AddNewCheckpoint(this);
+		/*if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Overlap Occuring"));
 			OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>()->m_pCurrentCheckpoint = this;
@@ -58,20 +60,21 @@ void AmyCheckpointMechanics::OnOverlapBegin(UPrimitiveComponent * OverlappedComp
 			{
 				PlayerRef->ReplenishRebase();
 			}
-		}
+		}*/
 	}
 }
 
 void AmyCheckpointMechanics::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
 {
-	if (OtherComp)
+	if (Cast<ABirdPlayer>(OtherActor))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Overlap Occuring"));
-		if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
+		UE_LOG(LogTemp, Warning, TEXT("Saving Spawn Point"));
+		Cast<ABirdController>(GetWorld()->GetFirstPlayerController())->AddNewCheckpoint(this);
+		/*if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Overlap Occuring"));
 			OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>()->m_pCurrentCheckpoint = this;
-		}
+		}*/
 	}
 }
 

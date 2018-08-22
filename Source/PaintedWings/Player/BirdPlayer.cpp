@@ -99,8 +99,10 @@ void ABirdPlayer::BeginPlay()
 	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
 	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
 
-	BirdControllerRef = Cast<ABirdController>(GetController());
-
+	// CAN't USE "GETCONTROLLER()" When restart playing was used (It must create it then posses, so at time of begin play, not have control)
+	BirdControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
+	if (!BirdControllerRef)
+		UE_LOG(LogTemp, Warning, TEXT("Uh oh NO CONTROLLER"));
 	UGameplayStatics::PlaySound2D(GetWorld(), SoundBGM,1.0f,1.0f,1.0f);
 }
 
@@ -112,7 +114,7 @@ void ABirdPlayer::Tick(float DeltaTime)
 	HungerLevel -= HungerLossRate * DeltaTime;
 	if ((HungerLevel <= 0.0f || GetActorLocation().Z < DeathHeight) && !bRespawning)
 	{
-		Respawn();
+		Death();
 	}
 
 	if (bIsGliding)
@@ -221,19 +223,19 @@ void ABirdPlayer::MoveForward(float Value)
 			//CameraRotation.Yaw = GetMesh()->GetComponentRotation().Yaw;
 
 
-			FRotator RotationApply;
-			RotationApply.Pitch = MaxGlidePitchRotate * Value;
+			//FRotator RotationApply;
+			//RotationApply.Pitch = MaxGlidePitchRotate * Value;
 
-			FVector CameraForward = ThirdPersonCamera->GetForwardVector();
+			//FVector CameraForward = ThirdPersonCamera->GetForwardVector();
 			//CameraForward.Y = 0.0f;
-			CameraForward.Y = Value * MaxGlidePitchRotate;
+			//CameraForward.Y = Value * MaxGlidePitchRotate;
 
 			/*FVector CamRot = RotationApply.RotateVector(CameraForward);
 			FRotator DirectionRotation = CamRot.Rotation();*/
 
-			FQuat NewCamQuat = CameraForward.ToOrientationQuat();
-			FRotator NewCameraRotation =  ThirdPersonCamera->RelativeRotation;// CameraForward.ToOrientationRotator();// .Rotation();
-			NewCameraRotation.Pitch = Value * MaxGlidePitchRotate;
+			//FQuat NewCamQuat = CameraForward.ToOrientationQuat();
+			//FRotator NewCameraRotation =  ThirdPersonCamera->RelativeRotation;// CameraForward.ToOrientationRotator();// .Rotation();
+			//NewCameraRotation.Pitch = Value * MaxGlidePitchRotate;
 
 			/*CameraForward.Y = 0.0f;
 			
@@ -263,7 +265,7 @@ void ABirdPlayer::MoveForward(float Value)
 			//DirectionRotation.RotateVector(GetMesh()->GetRightVector());
 
 
-			UE_LOG(LogTemp, Warning, TEXT("Camera Rot %s"), *NewCamQuat.ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("Camera Rot %s"), *NewCamQuat.ToString());
 
 			//GetMesh()->SetWorldRotation(Rotated);
 			//GetMesh()->SetWorldRotation(CameraForward.Rotation());
@@ -362,7 +364,7 @@ void ABirdPlayer::ApplyDoubleJump()
 	HasDoubleJumped = true;
 }
 
-void ABirdPlayer::Respawn()
+void ABirdPlayer::Death()
 {
 	if (bRespawning) return;
 	// Play Partical Effect
@@ -371,9 +373,12 @@ void ABirdPlayer::Respawn()
 	// Invisible
 	DeathParticleSystem->Activate();
 	bRespawning = true;
-	GetMesh()->SetVisibility(false);
+	//GetMesh()->SetVisibility(false);
 	GetCharacterMovement()->DisableMovement();
 	bInputEnabled = false;
+	GetMesh()->SetCollisionProfileName("PhysicsActor");
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetSimulatePhysics(true);
 	//BirdControllerRef->SetViewTargetWithBlend(this, 0.1f, EViewTargetBlendFunction::VTBlend_EaseIn, 0.5f, true);
 	//BirdControllerRef->bAutoManageActiveCameraTarget = false;
 	//GetCapsuleComponent()->SetSimulatePhysics(true);
@@ -455,28 +460,36 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 void ABirdPlayer::MoveToCheckpoint()
 {
 	GetWorldTimerManager().ClearTimer(RespawnHandle);
-	UE_LOG(LogTemp, Warning, TEXT("Checkpoint Activating"));
-	if (this)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerFound"));
-		if (this->FindComponentByClass<UplayerCheckpointMechanics>())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Mechanics Script Found"));
-			if (BirdControllerRef)
-			{
-				BirdControllerRef->RemoveCurrentCollectables();
-				BirdControllerRef->Possess(this);
-			}
+	if (BirdControllerRef) BirdControllerRef->Respawn();
+	else UE_LOG(LogTemp, Warning, TEXT("CONTROLLER REFERENCE NOT SET"));
 
-			ReplenishRebase();
-			this->FindComponentByClass<UplayerCheckpointMechanics>()->MoveToCurrentCheckpoint();
-			//GetCapsuleComponent()->SetSimulatePhysics(false);
-			bInputEnabled = true;
-			GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Walking;
-			GetMesh()->SetVisibility(true);
-			bRespawning = false;
-		}
-	}
+	//UE_LOG(LogTemp, Warning, TEXT("Checkpoint Activating"));
+	//if (this)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("OwnerFound"));
+	//	if (this->FindComponentByClass<UplayerCheckpointMechanics>())
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("Mechanics Script Found"));
+	//		/*if (BirdControllerRef)
+	//		{
+	//			BirdControllerRef->RemoveCurrentCollectables();
+	//			BirdControllerRef->Possess(this);
+	//		}*/
+
+	//		//ReplenishRebase();
+	//		//this->FindComponentByClass<UplayerCheckpointMechanics>()->MoveToCurrentCheckpoint();
+	//		//GetMesh()->SetSimulatePhysics(false);
+	//		//GetMesh()->SetCollisionProfileName("CharacterMesh");
+	//		//UE_LOG(LogTemp, Warning, TEXT("Location Before %s"), *GetMesh()->GetComponentLocation().ToString());
+	//		//GetMesh()->SetWorldLocationAndRotation(GetCapsuleComponent()->GetComponentLocation(), GetCapsuleComponent()->GetComponentRotation());//->GetComponentLocation()->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f), false, nullptr, ETeleportType::ResetPhysics);
+	//		//UE_LOG(LogTemp, Warning, TEXT("Location After %s"), *GetMesh()->GetComponentLocation().ToString());
+	//		//GetMesh()->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+	//		//bInputEnabled = true;
+	//		//GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Walking;
+	//		////GetMesh()->SetVisibility(true);
+	//		//bRespawning = false;
+	//	}
+	//}
 }
 
 void ABirdPlayer::NectarGathering()

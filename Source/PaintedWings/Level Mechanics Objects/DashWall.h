@@ -19,7 +19,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	class ABirdPlayer* PlayerRef;
+	class ABirdController* PlayerControllerRef;
 
 public:	
 	// Called every frame

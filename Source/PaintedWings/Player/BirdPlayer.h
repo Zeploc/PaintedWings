@@ -35,8 +35,6 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 		float BaseLookUpRate;
-	UPROPERTY(EditAnywhere)
-		AActor* CurrentCheckpoint;
 
 protected:
 	// Called when the game starts or when spawned
@@ -68,7 +66,7 @@ protected:
 	FTimerHandle DoubleJumpTimerHandle;
 	FTimerHandle DashTimerHandle;
 	FTimerHandle RespawnHandle;
-	void Respawn();
+	void Death();
 	bool bRespawning = false;
 	void StartGlide();
 	bool JumpHeld = false;

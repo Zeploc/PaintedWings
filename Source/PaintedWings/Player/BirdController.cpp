@@ -4,7 +4,8 @@
 
 #include "BirdPlayer.h"
 #include "Level Mechanics Objects/Collectable.h"
-
+#include "Engine/World.h"
+#include "GameFramework/GameModeBase.h"
 
 // Sets default values
 ABirdController::ABirdController()
@@ -43,11 +44,19 @@ void ABirdController::RemoveCurrentCollectables()
 	CurrentCollectables.Empty();
 }
 
-void ABirdController::DeathCam()
-{
-	SetViewTargetWithBlend(this, 0.1f, EViewTargetBlendFunction::VTBlend_EaseIn, 0.0f, true);
-	bAutoManageActiveCameraTarget = false;
+void ABirdController::Respawn()
+{	
+	GetCharacter()->Destroy();
 	UnPossess();
+	GetWorld()->GetAuthGameMode()->RestartPlayer(GetWorld()->GetFirstPlayerController());
+	if (CurrentCheckpoint) GetCharacter()->SetActorLocation(CurrentCheckpoint->GetActorLocation());
+	else UE_LOG(LogTemp, Warning, TEXT("NO CHECKPOINT SET"));
+}
+
+void ABirdController::AddNewCheckpoint(AActor * NewCheckpoint)
+{
+	CurrentCheckpoint = NewCheckpoint;
+	UE_LOG(LogTemp, Warning, TEXT("New checkpoint set %s"), *NewCheckpoint->GetFName().ToString());
 }
 
 void ABirdController::AddCollectablePoint(class ACollectable* Col)

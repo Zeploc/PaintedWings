@@ -6,6 +6,7 @@
 #include "playerCheckpointMechanics.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
+#include "Player/BirdPlayer.h"
 
 // Sets default values
 AWindStream::AWindStream()
@@ -47,7 +48,7 @@ void AWindStream::Tick(float DeltaTime)
 
 void AWindStream::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
+	if (Cast<ABirdPlayer>(OtherActor))// OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
 	{
 		/*Rotation = GetOwner()->GetActorRotation();
 		YawRotation = FRotator(0, Rotation.Yaw, 0);

@@ -4,6 +4,7 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Player/BirdPlayer.h"
+#include "Player/BirdController.h"
 
 #include "Engine.h"
 
@@ -26,14 +27,15 @@ void ADashWall::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	PlayerRef = Cast<ABirdPlayer>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	PlayerControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
 }
 
 // Called every frame
 void ADashWall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+		
+	ABirdPlayer* PlayerRef = Cast<ABirdPlayer>(PlayerControllerRef->GetCharacter());
 	FVector XYSpeed = PlayerRef->GetVelocity();
 	XYSpeed.Y = 0.0f;
 	if (FVector::Distance(PlayerRef->GetActorLocation(), GetActorLocation()) < 500.0f && PlayerRef->IsDashing && XYSpeed.Size() > MinimumSpeed)

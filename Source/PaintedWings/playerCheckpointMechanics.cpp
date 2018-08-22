@@ -35,12 +35,12 @@ void UplayerCheckpointMechanics::TickComponent(float DeltaTime, ELevelTick TickT
 	// ...
 }
 
-void UplayerCheckpointMechanics::MoveToCurrentCheckpoint()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Checkpoint Activating"));
-	if (m_pCurrentCheckpoint)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Checkpoint Activated"));
-		GetOwner()->SetActorLocation(m_pCurrentCheckpoint->GetActorLocation());
-	}
-}
+//void UplayerCheckpointMechanics::MoveToCurrentCheckpoint()
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("Checkpoint Activating"));
+//	if (m_pCurrentCheckpoint)
+//	{
+//		UE_LOG(LogTemp, Warning, TEXT("Checkpoint Activated"));
+//		GetOwner()->SetActorLocation(m_pCurrentCheckpoint->GetActorLocation());
+//	}
+//}
