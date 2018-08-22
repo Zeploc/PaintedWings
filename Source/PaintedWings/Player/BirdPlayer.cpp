@@ -13,6 +13,7 @@
 #include "EngineUtils.h"
 #include "Particles/ParticleSystemComponent.h"
 
+
 #include "playerCheckpointMechanics.h"
 #include "EngineUtils.h"
 #include "Components/CapsuleComponent.h"
@@ -98,6 +99,8 @@ void ABirdPlayer::BeginPlay()
 	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
 
 	BirdControllerRef = Cast<ABirdController>(GetController());
+
+	UGameplayStatics::PlaySound2D(GetWorld(), SoundBGM,1.0f,1.0f,1.0f);
 }
 
 // Called every frame
@@ -308,10 +311,12 @@ void ABirdPlayer::StartJump()
 	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
 	JumpHeld = true;
+
 	if (GetCharacterMovement()->IsFalling())
 	{
 		if (HasDoubleJumped) return;
 		DoubleJump = true;
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), Flap1, this->GetActorLocation(), 1.0f, 1.0f, 0.0f);
 		GetCharacterMovement()->JumpZVelocity = DoubleJumpSize;
 		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %s"), GetCharacterMovement()->JumpZVelocity);
 		GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
@@ -320,6 +325,7 @@ void ABirdPlayer::StartJump()
 	}
 	else
 	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), Flap1, this->GetActorLocation(), 1.0f, 1.0f, 0.0f);
 		GetCharacterMovement()->JumpZVelocity = FirstJumpSize;
 		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %f"), GetCharacterMovement()->JumpZVelocity);
 		Jump();
@@ -363,7 +369,7 @@ void ABirdPlayer::StartGlide()
 	if (!bInputEnabled || !bCanGlide) return;
 	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	if (JumpHeld)
-	{
+	{     
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Purple, "Start Glide");
 		SwitchGlide(true);
 	}
@@ -380,6 +386,8 @@ void ABirdPlayer::Dash()
 	GetWorldTimerManager().SetTimer(DashTimerHandle, this, &ABirdPlayer::FinishDash, DashTimer, false);
 	IsDashing = true;
 	bIsGliding = false;
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Woosh1, this->GetActorLocation(), 1.0f, 1.0f, 0.0f);
 
 	FRotator Rotation = Controller->GetControlRotation();
 	Rotation.Yaw = DashDirectionForce.Rotation().Yaw;
@@ -491,4 +499,9 @@ void ABirdPlayer::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * Ot
 	{
 		bTouchingNectar = false;
 	}
+}
+
+void ABirdPlayer::SetDashAvaliability(bool _b)
+{
+	bCanDash = _b;
 }

@@ -6,6 +6,10 @@
 #include "GameFramework/Character.h"
 #include "BirdPlayer.generated.h"
 class UCapsuleComponent;
+
+class UStaticMeshComponent;
+class UMaterial;
+class UMaterialInstanceDynamic;
 UCLASS()
 class PAINTEDWINGS_API ABirdPlayer : public ACharacter
 {
@@ -88,6 +92,32 @@ protected:
 	
 	class ABirdController* BirdControllerRef;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* SoundBGM;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* SoundBGM2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* SoundAmbience;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* SoundAmbience2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* CicadaAmbience;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* Flap1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* Flap2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* Flap3;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* Flap4;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* Woosh1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* Woosh2;
 
 public:	
 	// Called every frame
@@ -158,4 +188,16 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hunger")
 		float HungerLossRate = 0.05f;
+
+	void SetDashAvaliability(bool _b);
+
+
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UStaticMeshComponent* platformMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UMaterial* MyMaterial;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UMaterialInstanceDynamic* DynMaterial;
 };
