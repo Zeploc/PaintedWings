@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "DashWall.generated.h"
-
+class USkeletalMeshComponent;
 UCLASS()
 class PAINTEDWINGS_API ADashWall : public AActor
 {
@@ -24,9 +24,12 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	void DeathSequence(float Timepased);
+	bool bBroken = false;
+	float timer = 0.0f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		UStaticMeshComponent* Web;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SkeletalMesh")
+		USkeletalMeshComponent* Web;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MinimumSpeed = 800.0f;
@@ -34,4 +37,5 @@ public:
 	UFUNCTION()
 		void OnCompOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
+
 };

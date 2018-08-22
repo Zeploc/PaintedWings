@@ -37,5 +37,12 @@ public:
 		class UArrowComponent* WindDirection;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Launch")
-		float LaunchSize = 500.0f;
+		float LaunchSize = 700.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stream")
+		float StreamSize = 20.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bStream = false;
+	bool bInside = false;
+	ACharacter* player;
 };
