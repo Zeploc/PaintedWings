@@ -408,7 +408,7 @@ void ABirdPlayer::Dash()
 
 	FRotator Rotation = Controller->GetControlRotation();
 	Rotation.Yaw = DashDirectionForce.Rotation().Yaw;
-	Controller->SetControlRotation(Rotation);
+	SetActorRotation(Rotation);// Controller->SetControlRotation(Rotation);
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 

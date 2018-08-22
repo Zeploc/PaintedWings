@@ -53,7 +53,7 @@ void AWindStream::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * 
 		YawRotation = FRotator(0, Rotation.Yaw, 0);
 		Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);*/
 		ACharacter* player = (ACharacter*)OtherActor;
-		player->LaunchCharacter(Direction * LaunchSize, false, false);
+		player->LaunchCharacter(Direction * LaunchSize, true, true);
 		//player->AddMovementInput(Direction, );
 	}
 }
