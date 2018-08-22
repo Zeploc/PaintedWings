@@ -34,7 +34,6 @@ AWindStream::AWindStream()
 void AWindStream::BeginPlay()
 {
 	Super::BeginPlay();
-
 	Direction = WindDirection->GetForwardVector();
 }
 
@@ -42,6 +41,12 @@ void AWindStream::BeginPlay()
 void AWindStream::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (bInside)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WindStream"));
+		if (bStream) { LaunchSize = StreamSize; };
+		player->LaunchCharacter(Direction * LaunchSize, false, false);
+	}
 
 }
 
@@ -49,17 +54,21 @@ void AWindStream::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * 
 {
 	if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
 	{
-		/*Rotation = GetOwner()->GetActorRotation();
-		YawRotation = FRotator(0, Rotation.Yaw, 0);
-		Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);*/
-		ACharacter* player = (ACharacter*)OtherActor;
-		player->LaunchCharacter(Direction * LaunchSize, false, false);
-		//player->AddMovementInput(Direction, );
+		player = (ACharacter*)OtherActor;
+		if (bStream)
+		{
+			bInside = true;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("WINDBOOST"));
+			player->LaunchCharacter(Direction * LaunchSize, true, true);
+		}
 	}
 }
 
 void AWindStream::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
 {
-
+	bInside = false;
 }
 
