@@ -2,7 +2,6 @@
 
 #include "playerCheckpointMechanics.h"
 #include "UObject/ConstructorHelpers.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
 

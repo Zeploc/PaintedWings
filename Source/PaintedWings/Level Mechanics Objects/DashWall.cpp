@@ -45,6 +45,7 @@ void ADashWall::Tick(float DeltaTime)
 	else
 	{
 		ABirdPlayer* PlayerRef = Cast<ABirdPlayer>(PlayerControllerRef->GetCharacter());
+		if (!PlayerRef) return;
 		FVector XYSpeed = PlayerRef->GetVelocity();
 		XYSpeed.Y = 0.0f;
 		if (FVector::Distance(PlayerRef->GetActorLocation(), GetActorLocation()) < 500.0f && PlayerRef->IsDashing && XYSpeed.Size() > MinimumSpeed)
