@@ -98,6 +98,7 @@ protected:
 	void CameraLerpCheck();
 	bool HasMovedCamera = true;
 	bool LerpCamera = false;
+	float DefaultCameraPitch;
 
 	
 	class ABirdController* BirdControllerRef;
@@ -201,19 +202,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Hunger")
 		bool GettingNectar = false;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 		float CameraLerpTimeout = 1.0f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 		float CameraLerpSpeed = 1.0f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 		float MinimumStartLerpMoveSpeed = 250.0f;
-
+	
 	void SetDashAvaliability(bool _b);
-
-
-
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* platformMesh;

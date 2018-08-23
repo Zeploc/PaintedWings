@@ -102,7 +102,11 @@ void ABirdPlayer::BeginPlay()
 	// CAN't USE "GETCONTROLLER()" When restart playing was used (It must create it then posses, so at time of begin play, not have control)
 	BirdControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
 	if (!BirdControllerRef)
+	{
 		UE_LOG(LogTemp, Warning, TEXT("Uh oh NO CONTROLLER"));
+	}
+	else
+		DefaultCameraPitch = BirdControllerRef->GetControlRotation().Pitch;
 }
 
 // Called every frame
@@ -162,7 +166,6 @@ void ABirdPlayer::Tick(float DeltaTime)
 	HasMovedCamera = false;
 }
 
-
 void ABirdPlayer::TurnAtRate(float Rate)
 {
 	if (Rate != 0) HasMovedCamera = true;
@@ -171,7 +174,6 @@ void ABirdPlayer::TurnAtRate(float Rate)
 
 	// calculate delta for this frame from the rate information
 }
-
 
 void ABirdPlayer::LookUpAtRate(float Rate)
 {
@@ -186,7 +188,6 @@ void ABirdPlayer::MouseTurn(float Value)
 	if (Value != 0) HasMovedCamera = true;
 	AddControllerYawInput(Value);
 }
-
 
 void ABirdPlayer::MouseLookUp(float Value)
 {
@@ -211,12 +212,13 @@ void ABirdPlayer::CameraMovement()
 	if (LerpCamera)
 	{
 		FVector NoHeightVelocity = GetVelocity();
-		NoHeightVelocity.Y = 0.0f;
+		NoHeightVelocity.Z = 0.0f;
 		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "WOULD LERP CAMERA");
 		FRotator CurrentControlRotation = GetController()->GetControlRotation();
 		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Purple, GetCapsuleComponent()->GetComponentRotation().ToString());
 		FRotator FacingRotation = CurrentControlRotation;
-		FacingRotation.Yaw = GetCapsuleComponent()->GetComponentRotation().Yaw;
+		FacingRotation.Yaw = GetMesh()->GetComponentRotation().Yaw;
+		FacingRotation.Pitch = DefaultCameraPitch;			
 
 		/*if (NoHeightVelocity.Size() <= 0.0f)
 		{
@@ -225,7 +227,8 @@ void ABirdPlayer::CameraMovement()
 		else
 		{*/
 
-		if (NoHeightVelocity.Size() >= MinimumStartLerpMoveSpeed)
+		float Angle = abs(CurrentControlRotation.Yaw - FacingRotation.Yaw);
+		if (NoHeightVelocity.Size() >= MinimumStartLerpMoveSpeed && Angle <= 170.0f)
 		{
 			float LerpSpeed = CameraLerpSpeed;
 			float Ratio = (NoHeightVelocity.Size() - MinimumStartLerpMoveSpeed) / (GetCharacterMovement()->MaxWalkSpeed - MinimumStartLerpMoveSpeed);
@@ -395,6 +398,7 @@ void ABirdPlayer::FinishDash()
 	Rotation.Roll = 0.0f;
 	GetMesh()->RelativeRotation = Rotation;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	if (JumpHeld) SwitchGlide(true);
 }
 
 void ABirdPlayer::SwitchGlide(bool IsGliding)
