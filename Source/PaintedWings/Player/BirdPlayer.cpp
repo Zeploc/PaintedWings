@@ -396,6 +396,7 @@ void ABirdPlayer::FinishDash()
 
 	FRotator Rotation = GetMesh()->RelativeRotation;
 	Rotation.Roll = 0.0f;
+	Rotation.Pitch = 0.0f;
 	GetMesh()->RelativeRotation = Rotation;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	if (JumpHeld) SwitchGlide(true);
