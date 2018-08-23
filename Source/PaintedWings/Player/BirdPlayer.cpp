@@ -218,14 +218,17 @@ void ABirdPlayer::CameraMovement()
 		FRotator FacingRotation = CurrentControlRotation;
 		FacingRotation.Yaw = GetCapsuleComponent()->GetComponentRotation().Yaw;
 
-		if (NoHeightVelocity.Size() <= 0.0f)
+		/*if (NoHeightVelocity.Size() <= 0.0f)
 		{
 			CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, CameraLerpSpeed * GetWorld()->DeltaTimeSeconds);
 		}
 		else
+		{*/
+
+		if (NoHeightVelocity.Size() >= MinimumStartLerpMoveSpeed)
 		{
 			float LerpSpeed = CameraLerpSpeed;
-			float Ratio = NoHeightVelocity.Size() / GetCharacterMovement()->MaxWalkSpeed;
+			float Ratio = (NoHeightVelocity.Size() - MinimumStartLerpMoveSpeed) / (GetCharacterMovement()->MaxWalkSpeed - MinimumStartLerpMoveSpeed);
 			GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "Current Ratio " + FString::SanitizeFloat(Ratio));
 			Ratio = FMath::Clamp(Ratio, 0.0f, 1.0f);
 			LerpSpeed *= Ratio;

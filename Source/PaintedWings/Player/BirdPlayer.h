@@ -207,6 +207,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
 		float CameraLerpSpeed = 1.0f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+		float MinimumStartLerpMoveSpeed = 250.0f;
+
 	void SetDashAvaliability(bool _b);
 
 
