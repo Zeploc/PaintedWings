@@ -364,74 +364,75 @@
 "../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/Level_Cylinder9.uasset" 363
 "../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/Level_Cylinder_3.uasset" 364
 "../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Maps/NewTestMichael.umap" 365
-"../../../Engine/Content/Functions/Engine_MaterialFunctions01/Gradient/RadialGradient.uasset" 366
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/FogSheet/Assets/MF_Raycast.uasset" 367
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/MaterialFunctions/MF_NormalMaskedVectors.uasset" 368
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Textures/Noise/TilingNoise03.uasset" 369
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/FogSheet/Assets/M_FogSheet_Master.uasset" 370
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/FogSheet/Assets/M_FogSheet_Master_INST.uasset" 371
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/FogSheet/Assets/SM_FogSheet_Plane.uasset" 372
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/FogSheet/BP_FogSheet.uasset" 373
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/SafeNormalize.uasset" 374
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Math/CreateThirdOrthogonalVector.uasset" 375
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components.uasset" 376
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Math/Transform3x3Matrix.uasset" 377
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/TangentBasis.uasset" 378
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BlendAngleCorrectedNormals.uasset" 379
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/VectorLength.uasset" 380
-"../../../Engine/Content/Functions/Engine_MaterialFunctions01/WorldPositionOffset/SplineThicken.uasset" 381
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/T_GodRay_Mask01.uasset" 382
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Textures/Noise/TilingNoise02.uasset" 383
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/M_GodRay.uasset" 384
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/M_GodRay_Inst_Animated.uasset" 385
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/SM_GodRay_Plane.uasset" 386
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/T_GodRay_Mask02.uasset" 387
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/BP_GodRay.uasset" 388
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Maps/Rourkes_Tesities_BuiltData.uasset" 389
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Materials/Stump_MAT.uasset" 390
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/WatercolorSettings.uasset" 391
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/Textures/bands.uasset" 392
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/M_CelShader.uasset" 393
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/M_Edge.uasset" 394
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/Textures/T_BumpyPaper.uasset" 395
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/M_Paper.uasset" 396
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/MakeFloat2.uasset" 397
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/M_Wobbling.uasset" 398
-"../../../Engine/Content/BasicShapes/Cone.uasset" 399
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Materials/Leaf_MAT.uasset" 400
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Mesh/Fern.uasset" 401
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Mesh/Node.uasset" 402
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Mesh/Stump_Textured.uasset" 403
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Particles/FernAmbient_Part.uasset" 404
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Particles/FernCluster_Part.uasset" 405
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Maps/Rourkes_Tesities.umap" 406
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Materials/Stump_MAT_Transparent.uasset" 407
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/FadingPlatform.uasset" 408
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/bridgeMushroomPlatform.uasset" 409
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/FarnMask2__1_.uasset" 410
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/BridgePlatformMushroom_MAT.uasset" 411
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/LeafCluster.uasset" 412
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/LeafPlatform.uasset" 413
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/LeafPlatformBluePrint.uasset" 414
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Maps/TestLevel_BuiltData.uasset" 415
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/StumpAssets_03.uasset" 416
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/Stumps_MAT.uasset" 417
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Mesh/Stump_MAT.uasset" 418
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Mesh/Stump_Hollow.uasset" 419
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/Bridge.uasset" 420
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/Mushrooms.uasset" 421
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/Branch_TwoProng.uasset" 422
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/HollowTree.uasset" 423
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/Long_Branch.uasset" 424
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/LongBranch_TwoProng.uasset" 425
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/TallTree.uasset" 426
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/TreeIndent.uasset" 427
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/SmallTrunk.uasset" 428
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/StartPlatform.uasset" 429
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/TreetopDiff.uasset" 430
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/TreeTopSharp.uasset" 431
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/FadeWithEdge_MAT.uasset" 432
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/TreeTopFaded.uasset" 433
-"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Maps/TestLevel.umap" 434
-"../../../Engine/Content/Maps/Entry_BuiltData.uasset" 435
-"../../../Engine/Content/Maps/Entry.umap" 436
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Maps/Objects.umap" 366
+"../../../Engine/Content/Functions/Engine_MaterialFunctions01/Gradient/RadialGradient.uasset" 367
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/FogSheet/Assets/MF_Raycast.uasset" 368
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/MaterialFunctions/MF_NormalMaskedVectors.uasset" 369
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Textures/Noise/TilingNoise03.uasset" 370
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/FogSheet/Assets/M_FogSheet_Master.uasset" 371
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/FogSheet/Assets/M_FogSheet_Master_INST.uasset" 372
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/FogSheet/Assets/SM_FogSheet_Plane.uasset" 373
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/FogSheet/BP_FogSheet.uasset" 374
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/SafeNormalize.uasset" 375
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Math/CreateThirdOrthogonalVector.uasset" 376
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components.uasset" 377
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Math/Transform3x3Matrix.uasset" 378
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/TangentBasis.uasset" 379
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BlendAngleCorrectedNormals.uasset" 380
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/VectorLength.uasset" 381
+"../../../Engine/Content/Functions/Engine_MaterialFunctions01/WorldPositionOffset/SplineThicken.uasset" 382
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/T_GodRay_Mask01.uasset" 383
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Textures/Noise/TilingNoise02.uasset" 384
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/M_GodRay.uasset" 385
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/M_GodRay_Inst_Animated.uasset" 386
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/SM_GodRay_Plane.uasset" 387
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/T_GodRay_Mask02.uasset" 388
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Environment/Blueprints/Lightshaft/BP_GodRay.uasset" 389
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Maps/Rourkes_Tesities_BuiltData.uasset" 390
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Materials/Stump_MAT.uasset" 391
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/WatercolorSettings.uasset" 392
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/Textures/bands.uasset" 393
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/M_CelShader.uasset" 394
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/M_Edge.uasset" 395
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/Textures/T_BumpyPaper.uasset" 396
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/M_Paper.uasset" 397
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/MakeFloat2.uasset" 398
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Watercolor/M_Wobbling.uasset" 399
+"../../../Engine/Content/BasicShapes/Cone.uasset" 400
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Materials/Leaf_MAT.uasset" 401
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Mesh/Fern.uasset" 402
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Mesh/Node.uasset" 403
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Mesh/Stump_Textured.uasset" 404
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Particles/FernAmbient_Part.uasset" 405
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Particles/FernCluster_Part.uasset" 406
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Maps/Rourkes_Tesities.umap" 407
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Materials/Stump_MAT_Transparent.uasset" 408
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/FadingPlatform.uasset" 409
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/bridgeMushroomPlatform.uasset" 410
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/FarnMask2__1_.uasset" 411
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/BridgePlatformMushroom_MAT.uasset" 412
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/LeafCluster.uasset" 413
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/LeafPlatform.uasset" 414
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/LeafPlatformBluePrint.uasset" 415
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Maps/TestLevel_BuiltData.uasset" 416
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/StumpAssets_03.uasset" 417
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/Stumps_MAT.uasset" 418
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Mesh/Stump_MAT.uasset" 419
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Assets/Mesh/Stump_Hollow.uasset" 420
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/Bridge.uasset" 421
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/Mushrooms.uasset" 422
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/Branch_TwoProng.uasset" 423
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/HollowTree.uasset" 424
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/Long_Branch.uasset" 425
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/LongBranch_TwoProng.uasset" 426
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/TallTree.uasset" 427
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/RourkesTreeZone/TreeIndent.uasset" 428
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/SmallTrunk.uasset" 429
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/StartPlatform.uasset" 430
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/TreetopDiff.uasset" 431
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/TreeTopSharp.uasset" 432
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/FadeWithEdge_MAT.uasset" 433
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/LevelAssets/TreeTopFaded.uasset" 434
+"../../../../../Users/alex.cou7417/Documents/Unreal Engine/PaintedWings/Content/Maps/TestLevel.umap" 435
+"../../../Engine/Content/Maps/Entry_BuiltData.uasset" 436
+"../../../Engine/Content/Maps/Entry.umap" 437
