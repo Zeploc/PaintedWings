@@ -79,9 +79,9 @@ void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &ABirdPlayer::MouseTurn);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ABirdPlayer::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &ABirdPlayer::MouseLookUp);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABirdPlayer::LookUpAtRate);
 	PlayerInputComponent->BindAction("Respawn", IE_Pressed, this, &ABirdPlayer::MoveToCheckpoint);
 	PlayerInputComponent->BindAction("NectarSuck", IE_Pressed, this, &ABirdPlayer::NectarGathering);
@@ -158,11 +158,14 @@ void ABirdPlayer::Tick(float DeltaTime)
 		if (bIsGliding) SwitchGlide(false);
 	}
 	InputDelayer();
+	CameraMovement();
+	HasMovedCamera = false;
 }
 
 
 void ABirdPlayer::TurnAtRate(float Rate)
 {
+	if (Rate != 0) HasMovedCamera = true;
 	if (!bInputEnabled) return;
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 
@@ -172,10 +175,72 @@ void ABirdPlayer::TurnAtRate(float Rate)
 
 void ABirdPlayer::LookUpAtRate(float Rate)
 {
+	if (Rate != 0) HasMovedCamera = true;
 	if (!bInputEnabled) return;
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
+
+void ABirdPlayer::MouseTurn(float Value)
+{
+	if (Value != 0) HasMovedCamera = true;
+	AddControllerYawInput(Value);
+}
+
+
+void ABirdPlayer::MouseLookUp(float Value)
+{
+	if (Value != 0) HasMovedCamera = true;
+	AddControllerPitchInput(Value);
+}
+
+void ABirdPlayer::CameraMovement()
+{
+	if (!HasMovedCamera)
+	{
+		if (!CameraHandle.IsValid() && !LerpCamera)
+			GetWorldTimerManager().SetTimer(CameraHandle, this, &ABirdPlayer::CameraLerpCheck, CameraLerpTimeout, false);
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Red, "Camera Input");
+		GetWorldTimerManager().ClearTimer(CameraHandle);
+		LerpCamera = false;
+		return;
+	}
+	if (LerpCamera)
+	{
+		FVector NoHeightVelocity = GetVelocity();
+		NoHeightVelocity.Y = 0.0f;
+		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "WOULD LERP CAMERA");
+		FRotator CurrentControlRotation = GetController()->GetControlRotation();
+		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Purple, GetCapsuleComponent()->GetComponentRotation().ToString());
+		FRotator FacingRotation = CurrentControlRotation;
+		FacingRotation.Yaw = GetCapsuleComponent()->GetComponentRotation().Yaw;
+
+		if (NoHeightVelocity.Size() <= 0.0f)
+		{
+			CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, CameraLerpSpeed * GetWorld()->DeltaTimeSeconds);
+		}
+		else
+		{
+			float LerpSpeed = CameraLerpSpeed;
+			float Ratio = NoHeightVelocity.Size() / GetCharacterMovement()->MaxWalkSpeed;
+			GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "Current Ratio " + FString::SanitizeFloat(Ratio));
+			Ratio = FMath::Clamp(Ratio, 0.0f, 1.0f);
+			LerpSpeed *= Ratio;
+			CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, LerpSpeed * GetWorld()->DeltaTimeSeconds);
+		}
+		GetController()->SetControlRotation(CurrentControlRotation);
+	}
+}
+
+void ABirdPlayer::CameraLerpCheck()
+{
+	GetWorldTimerManager().ClearTimer(CameraHandle);
+	if (!HasMovedCamera) LerpCamera = true;
+}
+
 
 void ABirdPlayer::MoveForward(float Value)
 {
@@ -197,7 +262,7 @@ void ABirdPlayer::MoveForward(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
 
-
+		//LerpCamera = false;
 	}
 }
 
@@ -214,6 +279,8 @@ void ABirdPlayer::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+
+		//LerpCamera = false;
 	}
 }
 
@@ -354,6 +421,8 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 		GetMesh()->SetRelativeRotation(FRotator::ZeroRotator);
 	}
 }
+
+
 
 void ABirdPlayer::MoveToCheckpoint()
 {

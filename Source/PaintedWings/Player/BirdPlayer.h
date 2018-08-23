@@ -58,6 +58,11 @@ protected:
 	*/
 	void LookUpAtRate(float Rate);
 
+	void MouseTurn(float Value);
+
+	void MouseLookUp(float Value);
+
+
 	float NormalGravity;
 	float NormalRotationRate;
 	float NormalAirControl;
@@ -66,6 +71,7 @@ protected:
 	FTimerHandle DoubleJumpTimerHandle;
 	FTimerHandle DashTimerHandle;
 	FTimerHandle RespawnHandle;
+	FTimerHandle CameraHandle;
 	void Death();
 	bool bRespawning = false;
 	void StartGlide();
@@ -87,6 +93,12 @@ protected:
 	bool bCanDash = true;
 
 	void SwitchGlide(bool IsGliding);
+
+	void CameraMovement();
+	void CameraLerpCheck();
+	bool HasMovedCamera = true;
+	bool LerpCamera = false;
+
 	
 	class ABirdController* BirdControllerRef;
 
@@ -188,6 +200,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Hunger")
 		bool GettingNectar = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+		float CameraLerpTimeout = 1.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+		float CameraLerpSpeed = 1.0f;
 
 	void SetDashAvaliability(bool _b);
 
