@@ -212,6 +212,9 @@ public:
 		float MinimumStartLerpMoveSpeed = 250.0f;
 	
 	void SetDashAvaliability(bool _b);
+	bool IsRespawning() {
+		return bRespawning;			
+	}
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
