@@ -72,6 +72,7 @@ protected:
 	FTimerHandle DashTimerHandle;
 	FTimerHandle RespawnHandle;
 	FTimerHandle CameraHandle;
+	FTimerHandle CameraPlayerStillHandle;
 	void Death();
 	bool bRespawning = false;
 	void StartGlide();
@@ -92,12 +93,15 @@ protected:
 	void FinishDash();
 	bool bCanDash = true;
 
+
 	void SwitchGlide(bool IsGliding);
 
 	void CameraMovement();
 	void CameraLerpCheck();
+	void CameraStillLerpCheck();
 	bool HasMovedCamera = true;
 	bool LerpCamera = false;
+	bool IdleCameraLerp = false;
 	float DefaultCameraPitch;
 
 	
