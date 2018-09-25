@@ -29,11 +29,11 @@ public:
 		class UParticleSystemComponent* DeathParticleSystem;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 		float BaseTurnRate;
 
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 		float BaseLookUpRate;
 
 protected:
@@ -72,6 +72,7 @@ protected:
 	FTimerHandle DashTimerHandle;
 	FTimerHandle RespawnHandle;
 	FTimerHandle CameraHandle;
+	FTimerHandle CameraPlayerStillHandle;
 	void Death();
 	bool bRespawning = false;
 	void StartGlide();
@@ -92,12 +93,15 @@ protected:
 	void FinishDash();
 	bool bCanDash = true;
 
+
 	void SwitchGlide(bool IsGliding);
 
 	void CameraMovement();
 	void CameraLerpCheck();
+	void CameraStillLerpCheck();
 	bool HasMovedCamera = true;
 	bool LerpCamera = false;
+	bool IdleCameraLerp = false;
 	float DefaultCameraPitch;
 
 	
@@ -212,6 +216,9 @@ public:
 		float MinimumStartLerpMoveSpeed = 250.0f;
 	
 	void SetDashAvaliability(bool _b);
+	bool IsRespawning() {
+		return bRespawning;			
+	}
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

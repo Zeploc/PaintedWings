@@ -47,34 +47,23 @@ void AmyCheckpointMechanics::Tick(float DeltaTime)
 
 void AmyCheckpointMechanics::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (Cast<ABirdPlayer>(OtherActor))
+	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
+	if (BirdRef)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Saving Spawn Point"));
-		Cast<ABirdController>(GetWorld()->GetFirstPlayerController())->AddNewCheckpoint(this);
-		/*if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Overlap Occuring"));
-			OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>()->m_pCurrentCheckpoint = this;
-			ABirdPlayer* PlayerRef = Cast<ABirdPlayer>(OtherActor);
-			if (PlayerRef)
-			{
-				PlayerRef->ReplenishRebase();
-			}
-		}*/
+		if (!BirdRef->IsRespawning())
+			Cast<ABirdController>(GetWorld()->GetFirstPlayerController())->AddNewCheckpoint(this);
 	}
 }
 
 void AmyCheckpointMechanics::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
 {
-	if (Cast<ABirdPlayer>(OtherActor))
+	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
+	if (BirdRef)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Saving Spawn Point"));
-		Cast<ABirdController>(GetWorld()->GetFirstPlayerController())->AddNewCheckpoint(this);
-		/*if (OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Overlap Occuring"));
-			OtherComp->GetOwner()->FindComponentByClass<UplayerCheckpointMechanics>()->m_pCurrentCheckpoint = this;
-		}*/
+		if (!BirdRef->IsRespawning())
+			Cast<ABirdController>(GetWorld()->GetFirstPlayerController())->AddNewCheckpoint(this);
 	}
 }
 

@@ -197,7 +197,10 @@ void ABirdPlayer::MouseLookUp(float Value)
 
 void ABirdPlayer::CameraMovement()
 {
-	if (!HasMovedCamera)
+	if (bRespawning) return;
+	FVector NoHeightVelocity = GetVelocity();
+	NoHeightVelocity.Z = 0.0f;
+	if (!HasMovedCamera || NoHeightVelocity.Size() <= 0.0f)
 	{
 		if (!CameraHandle.IsValid() && !LerpCamera)
 			GetWorldTimerManager().SetTimer(CameraHandle, this, &ABirdPlayer::CameraLerpCheck, CameraLerpTimeout, false);
@@ -209,10 +212,9 @@ void ABirdPlayer::CameraMovement()
 		LerpCamera = false;
 		return;
 	}
+
 	if (LerpCamera)
 	{
-		FVector NoHeightVelocity = GetVelocity();
-		NoHeightVelocity.Z = 0.0f;
 		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "WOULD LERP CAMERA");
 		FRotator CurrentControlRotation = GetController()->GetControlRotation();
 		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Purple, GetCapsuleComponent()->GetComponentRotation().ToString());
@@ -220,16 +222,21 @@ void ABirdPlayer::CameraMovement()
 		FacingRotation.Yaw = GetMesh()->GetComponentRotation().Yaw;
 		FacingRotation.Pitch = DefaultCameraPitch;			
 
-		/*if (NoHeightVelocity.Size() <= 0.0f)
-		{
-			CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, CameraLerpSpeed * GetWorld()->DeltaTimeSeconds);
-		}
-		else
-		{*/
-
 		float Angle = abs(CurrentControlRotation.Yaw - FacingRotation.Yaw);
-		if (NoHeightVelocity.Size() >= MinimumStartLerpMoveSpeed && Angle <= 170.0f)
+		if (NoHeightVelocity.Size() <= 0.0f)
 		{
+			if (IdleCameraLerp)
+			{
+				CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, CameraLerpSpeed * GetWorld()->DeltaTimeSeconds);
+			}
+			else
+			{
+				if (!CameraPlayerStillHandle.IsValid()) GetWorldTimerManager().SetTimer(CameraPlayerStillHandle, this, &ABirdPlayer::CameraStillLerpCheck, CameraLerpTimeout, false);				
+			}
+		}
+		else if (NoHeightVelocity.Size() >= MinimumStartLerpMoveSpeed && ((Angle <= 170.0f && !bIsGliding) || (GetCharacterMovement()->IsFalling() && Angle <= 100.0f)))
+		{
+			IdleCameraLerp = false;
 			float LerpSpeed = CameraLerpSpeed;
 			float Ratio = (NoHeightVelocity.Size() - MinimumStartLerpMoveSpeed) / (GetCharacterMovement()->MaxWalkSpeed - MinimumStartLerpMoveSpeed);
 			GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "Current Ratio " + FString::SanitizeFloat(Ratio));
@@ -245,6 +252,17 @@ void ABirdPlayer::CameraLerpCheck()
 {
 	GetWorldTimerManager().ClearTimer(CameraHandle);
 	if (!HasMovedCamera) LerpCamera = true;
+}
+
+void ABirdPlayer::CameraStillLerpCheck()
+{
+	GetWorldTimerManager().ClearTimer(CameraPlayerStillHandle);
+	FVector NoHeightVelocity = GetVelocity();
+	NoHeightVelocity.Z = 0.0f;
+	if (NoHeightVelocity.Size() <= 1.0f)
+	{
+		IdleCameraLerp = true;
+	}
 }
 
 
@@ -342,6 +360,7 @@ void ABirdPlayer::Death()
 	// Disable Control
 	// Disable Movement
 	// Invisible
+	BirdControllerRef->RemoveCurrentCollectables();
 	DeathParticleSystem->Activate();
 	bRespawning = true;
 	//GetMesh()->SetVisibility(false);
@@ -373,7 +392,7 @@ void ABirdPlayer::Dash()
 	if (!bCanDash) return;
 	bCanDash = false;
 	GetCharacterMovement()->GravityScale = 0.0f;
-	FVector DashDirectionForce = ThirdPersonCamera->GetForwardVector() * DashForce;
+	FVector DashDirectionForce = GetMesh()->GetForwardVector() * DashForce;
 	DashDirectionForce.Z = 0.0f;
 	LaunchCharacter(DashDirectionForce, true, true);
 	GetWorldTimerManager().SetTimer(DashTimerHandle, this, &ABirdPlayer::FinishDash, DashTimer, false);
@@ -396,6 +415,7 @@ void ABirdPlayer::FinishDash()
 
 	FRotator Rotation = GetMesh()->RelativeRotation;
 	Rotation.Roll = 0.0f;
+	Rotation.Pitch = 0.0f;
 	GetMesh()->RelativeRotation = Rotation;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	if (JumpHeld) SwitchGlide(true);
