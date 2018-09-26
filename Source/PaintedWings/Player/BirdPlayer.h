@@ -102,7 +102,7 @@ protected:
 	bool HasMovedCamera = true;
 	bool LerpCamera = false;
 	bool IdleCameraLerp = false;
-	float DefaultCameraPitch;
+	
 
 	
 	class ABirdController* BirdControllerRef;
@@ -214,6 +214,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 		float MinimumStartLerpMoveSpeed = 250.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+		float DefaultCameraPitch = -25.0f;
+
 	
 	void SetDashAvaliability(bool _b);
 	bool IsRespawning() {

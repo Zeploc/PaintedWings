@@ -99,14 +99,14 @@ void ABirdPlayer::BeginPlay()
 	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
 	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
 
-	// CAN't USE "GETCONTROLLER()" When restart playing was used (It must create it then posses, so at time of begin play, not have control)
-	BirdControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
-	if (!BirdControllerRef)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Uh oh NO CONTROLLER"));
-	}
-	else
-		DefaultCameraPitch = BirdControllerRef->GetControlRotation().Pitch;
+	//// CAN't USE "GETCONTROLLER()" When restart playing was used (It must create it then posses, so at time of begin play, not have control)
+	//BirdControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
+	//if (!BirdControllerRef)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Uh oh NO CONTROLLER"));
+	//}
+	//else
+	//	DefaultCameraPitch = BirdControllerRef->GetControlRotation().Pitch;
 }
 
 // Called every frame
