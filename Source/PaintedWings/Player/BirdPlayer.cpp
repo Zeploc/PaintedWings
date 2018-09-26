@@ -91,6 +91,7 @@ void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void ABirdPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	bClimbingVines = false;
 	NormalGravity = GetCharacterMovement()->GravityScale;
 	NormalAirControl = GetCharacterMovement()->AirControl;
 
@@ -333,6 +334,7 @@ void ABirdPlayer::StartJump()
 		GetCharacterMovement()->JumpZVelocity = FirstJumpSize;
 		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %f"), GetCharacterMovement()->JumpZVelocity);
 		Jump();
+		this->bSimGravityDisabled = false;
 	}
 }
 
@@ -349,6 +351,7 @@ void ABirdPlayer::ApplyDoubleJump()
 {
 	GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
 	Jump();
+	this->bSimGravityDisabled = false;
 	//JumpHeld = true;
 	HasDoubleJumped = true;
 }
