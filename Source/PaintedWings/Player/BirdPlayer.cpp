@@ -360,6 +360,8 @@ void ABirdPlayer::Death()
 	// Disable Control
 	// Disable Movement
 	// Invisible
+	if (!BirdControllerRef)
+		BirdControllerRef = Cast<ABirdController>(GetController());
 	BirdControllerRef->RemoveCurrentCollectables();
 	DeathParticleSystem->Activate();
 	bRespawning = true;

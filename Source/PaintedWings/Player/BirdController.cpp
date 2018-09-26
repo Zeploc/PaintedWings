@@ -39,7 +39,6 @@ void ABirdController::ConfirmCollectables()
 
 void ABirdController::RemoveCurrentCollectables()
 {
-	if (CurrentCollectables.Empty()) return;
 	for (int i = 0; i < CurrentCollectables.Num(); i++)
 	{
 		if (CurrentCollectables[i]) CurrentCollectables[i]->RespawnCollectable();
