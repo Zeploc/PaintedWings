@@ -36,6 +36,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 		float BaseLookUpRate;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = State)
+		bool bClimbingVines;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -87,7 +91,6 @@ protected:
 	void StopJump();
 	void ApplyDoubleJump();
 	float FirstJumpSize;
-	bool HasDoubleJumped = false;
 
 	void Dash();
 	void FinishDash();
@@ -173,6 +176,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dashing")
 		bool IsDashing = false;
+
+	bool HasDoubleJumped = false;
 
 	void NectarGathering();
 	void InputDelayer();
