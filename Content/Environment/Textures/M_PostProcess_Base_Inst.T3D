@@ -1,0 +1,12 @@
+Begin Object Class=/Script/Engine.MaterialInstanceConstant Name="M_PostProcess_Base_Inst"
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfoWithPrimitive Name="SceneThumbnailInfoWithPrimitive_1"
+   End Object
+   Begin Object Name="SceneThumbnailInfoWithPrimitive_1"
+   End Object
+   Parent=Material'"/Game/Environment/Materials/M_PostProcess_Base.M_PostProcess_Base"'
+   ScalarParameterValues(0)=(ParameterName="Post Process Blend Weight",ParameterInfo=(Name="Post Process Blend Weight"),ExpressionGUID=4EE660A54D2A30D3A85606BCD4BF8C1B)
+   ScalarParameterValues(1)=(ParameterName="RefractionDepthBias",ParameterInfo=(Name="RefractionDepthBias"))
+   BasePropertyOverrides=(OpacityMaskClipValue=0.333300,ShadingModel=MSM_Unlit)
+   ThumbnailInfo=SceneThumbnailInfoWithPrimitive'"SceneThumbnailInfoWithPrimitive_1"'
+   LightingGuid=0F54BFEF4E79861354A549A7C4AB201E
+End Object

@@ -1,0 +1,13 @@
+Begin Object Class=/Script/Engine.MaterialInstanceConstant Name="M_PostProcess_Paper_Inst"
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfoWithPrimitive Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   Begin Object Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   ParameterStateId=19879A8141ECA74CFEDFE39AB2D7AC78
+   Parent=Material'"/Game/Environment/Materials/M_PostProcess_Paper.M_PostProcess_Paper"'
+   ScalarParameterValues(0)=(ParameterInfo=(Name="MatineeBlendWeight"),ExpressionGUID=149E3EEF490E4DCC4CD873B4A938285D)
+   ScalarParameterValues(1)=(ParameterInfo=(Name="RefractionDepthBias"))
+   BasePropertyOverrides=(OpacityMaskClipValue=0.333300,ShadingModel=MSM_Unlit)
+   ThumbnailInfo=SceneThumbnailInfoWithPrimitive'"SceneThumbnailInfoWithPrimitive_0"'
+   LightingGuid=CF0B98A9471A5E9A30531891CA48511E
+End Object
