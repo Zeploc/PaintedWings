@@ -126,11 +126,6 @@ void ABirdPlayer::Tick(float DeltaTime)
 		GetCharacterMovement()->GravityScale = 0;
 		UE_LOG(LogTemp, Warning, TEXT("NOGRAV: %f"), GetCharacterMovement()->GravityScale);
 	}
-	else if (bClimbingVines == false)
-	{
-		GetCharacterMovement()->GravityScale = 1;
-		UE_LOG(LogTemp, Warning, TEXT("GRAV: %f"), GetCharacterMovement()->GravityScale);
-	}
 	else if (bIsGliding)
 	{
 		if (GetVelocity().Z > 0)
@@ -280,6 +275,8 @@ void ABirdPlayer::CameraStillLerpCheck()
 void ABirdPlayer::MoveForward(float Value)
 {
 	// find out which way is forward
+
+
 	const FRotator Rotation = Controller->GetControlRotation();
 	if (bIsGliding && Value >= 0)
 	{
@@ -288,13 +285,22 @@ void ABirdPlayer::MoveForward(float Value)
 		AddMovementInput(Direction, 1);
 	}
 
-	if (!bInputEnabled) return;
-	if ((Controller != NULL) && (Value != 0.0f))
+	if (!bInputEnabled) return;	
+	if (bClimbingVines && (Value != 0.0f))
+	{
+		GetCharacterMovement()->GravityScale = 0;
+		const FVector Direction = FVector(0, 0, 1);
+		
+		AddMovementInput(Direction, Value);
+		UE_LOG(LogTemp, Warning, TEXT("UP UP UP"));
+	}
+	else if ((Controller != NULL) && (Value != 0.0f))
 	{
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		//const FVector Direction = FVector(0, 0, 1);
 		AddMovementInput(Direction, Value);
 
 		//LerpCamera = false;
@@ -304,7 +310,15 @@ void ABirdPlayer::MoveForward(float Value)
 void ABirdPlayer::MoveRight(float Value)
 {
 	if (!bInputEnabled) return;
-	if ((Controller != NULL) && (Value != 0.0f))
+	if (bClimbingVines && (Value != 0.0f))
+	{
+		GetCharacterMovement()->GravityScale = 0;
+		const FVector Direction = -DirectionToVine;// .RightVector;// FVector(0, 1, 0);
+
+		AddMovementInput(Direction, Value);
+		UE_LOG(LogTemp, Warning, TEXT("UP UP UP"));
+	}
+	else if ((Controller != NULL) && (Value != 0.0f))
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -327,7 +341,14 @@ void ABirdPlayer::StartJump()
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
 	JumpHeld = true;
 
-	if (GetCharacterMovement()->IsFalling())
+	if (bClimbingVines)
+	{
+		bClimbingVines = false;
+		//BirdRef -> HasDoubleJumped = false;
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+	}
+	else if (GetCharacterMovement()->IsFalling())
 	{
 		if (HasDoubleJumped) return;
 		DoubleJump = true;
@@ -344,7 +365,6 @@ void ABirdPlayer::StartJump()
 		GetCharacterMovement()->JumpZVelocity = FirstJumpSize;
 		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %f"), GetCharacterMovement()->JumpZVelocity);
 		Jump();
-		this->bSimGravityDisabled = false;
 	}
 }
 
