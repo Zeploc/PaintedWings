@@ -41,7 +41,7 @@ void AClimbableVines::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActo
 		BirdRef -> bClimbingVines = true;
 		BirdRef -> HasDoubleJumped = false;
 		BirdRef->bSimGravityDisabled = true;
-		UE_LOG(LogTemp, Warning, TEXT("VinesEntering: %s"), BirdRef->HasDoubleJumped ? "true" : "false");
+		UE_LOG(LogTemp, Warning, TEXT("VinesEntering: %s"), BirdRef->HasDoubleJumped ? TEXT("true") : TEXT("false"));
 	}
 }
 
