@@ -121,7 +121,17 @@ void ABirdPlayer::Tick(float DeltaTime)
 		Death();
 	}
 
-	if (bIsGliding)
+	if (bClimbingVines == true)
+	{
+		GetCharacterMovement()->GravityScale = 0;
+		UE_LOG(LogTemp, Warning, TEXT("NOGRAV: %f"), GetCharacterMovement()->GravityScale);
+	}
+	else if (bClimbingVines == false)
+	{
+		GetCharacterMovement()->GravityScale = 1;
+		UE_LOG(LogTemp, Warning, TEXT("GRAV: %f"), GetCharacterMovement()->GravityScale);
+	}
+	else if (bIsGliding)
 	{
 		if (GetVelocity().Z > 0)
 		{
