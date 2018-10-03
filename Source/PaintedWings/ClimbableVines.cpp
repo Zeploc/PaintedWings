@@ -44,7 +44,9 @@ void AClimbableVines::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActo
 		BirdRef->GetCharacterMovement()->bOrientRotationToMovement = false;
 		BirdRef->DirectionToVine = -GetActorForwardVector();// GetActorLocation() - BirdRef->GetActorLocation();
 		//BirdRef->DirectionToVine.Normalize();
-		//BirdRef->SetActorRotation(BirdRef->DirectionToVine.Rotation());
+		FRotator NewRotation = BirdRef->GetActorRotation();
+		NewRotation.Yaw = GetActorRightVector().Rotation().Yaw - 180;
+		BirdRef->SetActorRotation(NewRotation);
 		BirdRef -> HasDoubleJumped = false;
 		BirdRef->bSimGravityDisabled = true;
 		UE_LOG(LogTemp, Warning, TEXT("VinesEntering: %s"), BirdRef->HasDoubleJumped ? TEXT("true") : TEXT("false"));
