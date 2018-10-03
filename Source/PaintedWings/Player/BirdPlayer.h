@@ -106,7 +106,6 @@ protected:
 	bool LerpCamera = false;
 	bool IdleCameraLerp = false;
 	
-
 	
 	class ABirdController* BirdControllerRef;
 
@@ -228,7 +227,8 @@ public:
 	bool IsRespawning() {
 		return bRespawning;			
 	}
-	
+
+	FVector DirectionToVine;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* platformMesh;

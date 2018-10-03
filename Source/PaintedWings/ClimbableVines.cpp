@@ -39,9 +39,15 @@ void AClimbableVines::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActo
 	if (BirdRef)
 	{
 		BirdRef -> bClimbingVines = true;
+		BirdRef->JumpCurrentCount = 1;
+		BirdRef->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+		BirdRef->GetCharacterMovement()->bOrientRotationToMovement = false;
+		BirdRef->DirectionToVine = -GetActorForwardVector();// GetActorLocation() - BirdRef->GetActorLocation();
+		//BirdRef->DirectionToVine.Normalize();
+		//BirdRef->SetActorRotation(BirdRef->DirectionToVine.Rotation());
 		BirdRef -> HasDoubleJumped = false;
 		BirdRef->bSimGravityDisabled = true;
-		UE_LOG(LogTemp, Warning, TEXT("VinesEntering: %s"), BirdRef->HasDoubleJumped ? "true" : "false");
+		UE_LOG(LogTemp, Warning, TEXT("VinesEntering: %s"), BirdRef->HasDoubleJumped ? TEXT("true") : TEXT("false"));
 	}
 }
 
@@ -50,10 +56,11 @@ void AClimbableVines::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor 
 	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
 	if (BirdRef)
 	{
-		BirdRef -> bClimbingVines = false;
-		BirdRef -> HasDoubleJumped = false;
-		BirdRef->bSimGravityDisabled = false;
-		UE_LOG(LogTemp, Warning, TEXT("VinesLeaving"));
+		//BirdRef -> bClimbingVines = false;
+		////BirdRef -> HasDoubleJumped = false;
+		//BirdRef->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+		//BirdRef->bSimGravityDisabled = false;
+		//UE_LOG(LogTemp, Warning, TEXT("VinesLeaving"));
 	}
 }
 
