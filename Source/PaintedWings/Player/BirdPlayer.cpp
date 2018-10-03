@@ -128,6 +128,9 @@ void ABirdPlayer::Tick(float DeltaTime)
 	}
 	else if (bIsGliding)
 	{
+		FRotator NewRotation = GetActorRotation();
+		NewRotation.Pitch = 0.0;
+		SetActorRotation(NewRotation);
 		if (GetVelocity().Z > 0)
 		{
 			GetCharacterMovement()->GravityScale = NormalGravity;
@@ -141,6 +144,9 @@ void ABirdPlayer::Tick(float DeltaTime)
 	}
 	else
 	{
+		FRotator NewRotation = GetActorRotation();
+		NewRotation.Pitch = 0.0;
+		SetActorRotation(NewRotation);
 		if (IsDashing)
 		{
 			GetCharacterMovement()->GravityScale = 0.0f;
@@ -277,7 +283,7 @@ void ABirdPlayer::MoveForward(float Value)
 	// find out which way is forward
 
 
-	const FRotator Rotation = Controller->GetControlRotation();
+	const FRotator Rotation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraRotation();//GetViewTarget()->GetActorRotation();// Controller->GetControlRotation();
 	if (bIsGliding && Value >= 0)
 	{
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -301,6 +307,7 @@ void ABirdPlayer::MoveForward(float Value)
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		//const FVector Direction = FVector(0, 0, 1);
+		UE_LOG(LogTemp, Warning, TEXT("Forward: %s"), *Direction.ToString());
 		AddMovementInput(Direction, Value);
 
 		//LerpCamera = false;
@@ -313,19 +320,19 @@ void ABirdPlayer::MoveRight(float Value)
 	if (bClimbingVines && (Value != 0.0f))
 	{
 		GetCharacterMovement()->GravityScale = 0;
-		const FVector Direction = -DirectionToVine;// .RightVector;// FVector(0, 1, 0);
+		const FVector Direction = DirectionToVine.RotateAngleAxis(90, FVector(0, 0, 1));
 
 		AddMovementInput(Direction, Value);
-		UE_LOG(LogTemp, Warning, TEXT("UP UP UP"));
+		UE_LOG(LogTemp, Warning, TEXT("SIDEO"));
 	}
 	else if ((Controller != NULL) && (Value != 0.0f))
 	{
 		// find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator Rotation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraRotation();// GetViewTarget()->GetActorRotation();// Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		UE_LOG(LogTemp, Warning, TEXT("Right: %s"), *Direction.ToString());
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 
@@ -336,19 +343,24 @@ void ABirdPlayer::MoveRight(float Value)
 void ABirdPlayer::StartJump()
 {
 	if (!bInputEnabled) return;
+	if (bClimbingVines)
+	{
+		//AddMovementInput(-DirectionToVine, 5.0f);
+		//GetCharacterMovement()->AddForce(-DirectionToVine * 100.0f);
+		bClimbingVines = false;
+		//BirdRef -> HasDoubleJumped = false;
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	}
+
 	SwitchGlide(false);
 	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
 	JumpHeld = true;
 
-	if (bClimbingVines)
-	{
-		bClimbingVines = false;
-		//BirdRef -> HasDoubleJumped = false;
-		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-		GetCharacterMovement()->bOrientRotationToMovement = true;
-	}
-	else if (GetCharacterMovement()->IsFalling())
+	
+	if (GetCharacterMovement()->IsFalling())
 	{
 		if (HasDoubleJumped) return;
 		DoubleJump = true;
