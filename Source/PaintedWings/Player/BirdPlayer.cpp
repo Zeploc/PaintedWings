@@ -212,7 +212,7 @@ void ABirdPlayer::CameraMovement()
 	if (bRespawning) return;
 	FVector NoHeightVelocity = GetVelocity();
 	NoHeightVelocity.Z = 0.0f;
-	if (!HasMovedCamera || NoHeightVelocity.Size() <= 0.0f)
+	if (!HasMovedCamera)//|| NoHeightVelocity.Size() <= 0.0f)
 	{
 		if (!CameraHandle.IsValid() && !LerpCamera)
 			GetWorldTimerManager().SetTimer(CameraHandle, this, &ABirdPlayer::CameraLerpCheck, CameraLerpTimeout, false);
