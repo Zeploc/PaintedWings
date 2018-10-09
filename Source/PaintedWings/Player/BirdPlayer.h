@@ -231,6 +231,7 @@ public:
 	}
 
 	FVector DirectionToVine;
+	FRotator VineRotation;
 	class AClimbableVines* ClimbRef;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

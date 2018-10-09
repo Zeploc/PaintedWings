@@ -133,6 +133,7 @@ void ABirdPlayer::Tick(float DeltaTime)
 	if (bClimbingVines == true)
 	{
 		GetCharacterMovement()->GravityScale = 0;
+		SetActorRotation(VineRotation);
 		UE_LOG(LogTemp, Warning, TEXT("NOGRAV: %f"), GetCharacterMovement()->GravityScale);
 	}
 	else if (bIsGliding)
@@ -356,7 +357,10 @@ void ABirdPlayer::StartJump()
 	if (bClimbingVines)
 	{
 		//AddMovementInput(-DirectionToVine, 5.0f);
-		//GetCharacterMovement()->AddForce(-DirectionToVine * 100.0f);
+		//GetCharacterMovement()->AddForce(-DirectionToVine * 1000.0f);
+		FVector LaunchDirection = -DirectionToVine;
+		//LaunchDirection.Z = 5.0f;
+		LaunchCharacter(LaunchDirection * 300.0f, true, true);
 		bClimbingVines = false;
 		//BirdRef -> HasDoubleJumped = false;
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
