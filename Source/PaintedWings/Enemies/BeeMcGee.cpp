@@ -17,11 +17,11 @@ ABeeMcGee::ABeeMcGee()
 	GetCapsuleComponent()->InitCapsuleSize(10.0f, 15.0f);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 0.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
-	GetCharacterMovement()->AirControl = 0.6;
-	//GetCharacterMovement()->MovementMode(EMovementMode::MOVE_Flying);
-
+	GetCharacterMovement()->AirControl = 0.1f;
+	GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Flying;
+	bCanMove = true;
 	BeeTrigger = CreateDefaultSubobject<USphereComponent>("Box");
 	BeeTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABeeMcGee::OnOverlapBegin);
 	BeeTrigger->OnComponentEndOverlap.AddDynamic(this, &ABeeMcGee::OnOverlapEnd);
@@ -44,13 +44,14 @@ void ABeeMcGee::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (PlayerRef)
 	{
-		if (Cast<ABirdPlayer>(PlayerRef))
+		if (Cast<ABirdPlayer>(PlayerRef) && bCanMove)
 		{
 			FVector Direction = PlayerRef->GetActorLocation() - this->GetActorLocation();
-			AddMovementInput(Direction, 1.0f);
+			Direction.Normalize();
+			AddMovementInput(Direction, 1.0);
+
 		}
 	}
-
 }
 
 // Called to bind functionality to input
@@ -58,6 +59,11 @@ void ABeeMcGee::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ABeeMcGee::ResetMovment()
+{
+	bCanMove = true;
 }
 
 void ABeeMcGee::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -83,7 +89,18 @@ void ABeeMcGee::OnKillOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor 
 	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
 	if (BirdRef)
 	{
+		if (BirdRef->fInvincibility <= 0)
+		{
+			bCanMove = false;
+			BirdRef->fInvincibility = 2.0f;
+			BirdRef->iHealth -= 1;
+			//FVector LaunchDir = GetActorLocation() - BirdRef->GetActorLocation();
+			//LaunchDir.Normalize();
+			//LaunchDir *= 10.0f;
+			//LaunchCharacter(LaunchDir, false, false);
 
+			//GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ABeeMcGee::ResetMovment, 1.0f, false, 1.0f);
+		}
 	}
 }
 
@@ -92,6 +109,11 @@ void ABeeMcGee::OnKillOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * 
 	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
 	if (BirdRef)
 	{
+		if (BirdRef->fInvincibility <= 0)
+		{
+			//BirdRef->fInvincibility = 2.0f;
+			//BirdRef->iHealth -= 1;
+		}
 	}
 }
 
