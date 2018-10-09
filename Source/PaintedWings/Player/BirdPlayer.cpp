@@ -91,6 +91,7 @@ void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void ABirdPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	bClimbingVines = false;
 	NormalGravity = GetCharacterMovement()->GravityScale;
 	NormalAirControl = GetCharacterMovement()->AirControl;
 
@@ -99,14 +100,14 @@ void ABirdPlayer::BeginPlay()
 	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
 	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
 
-	// CAN't USE "GETCONTROLLER()" When restart playing was used (It must create it then posses, so at time of begin play, not have control)
-	BirdControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
-	if (!BirdControllerRef)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Uh oh NO CONTROLLER"));
-	}
-	else
-		DefaultCameraPitch = BirdControllerRef->GetControlRotation().Pitch;
+	//// CAN't USE "GETCONTROLLER()" When restart playing was used (It must create it then posses, so at time of begin play, not have control)
+	//BirdControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
+	//if (!BirdControllerRef)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Uh oh NO CONTROLLER"));
+	//}
+	//else
+	//	DefaultCameraPitch = BirdControllerRef->GetControlRotation().Pitch;
 }
 
 // Called every frame
@@ -120,8 +121,16 @@ void ABirdPlayer::Tick(float DeltaTime)
 		Death();
 	}
 
-	if (bIsGliding)
+	if (bClimbingVines == true)
 	{
+		GetCharacterMovement()->GravityScale = 0;
+		UE_LOG(LogTemp, Warning, TEXT("NOGRAV: %f"), GetCharacterMovement()->GravityScale);
+	}
+	else if (bIsGliding)
+	{
+		FRotator NewRotation = GetActorRotation();
+		NewRotation.Pitch = 0.0;
+		SetActorRotation(NewRotation);
 		if (GetVelocity().Z > 0)
 		{
 			GetCharacterMovement()->GravityScale = NormalGravity;
@@ -135,6 +144,9 @@ void ABirdPlayer::Tick(float DeltaTime)
 	}
 	else
 	{
+		FRotator NewRotation = GetActorRotation();
+		NewRotation.Pitch = 0.0;
+		SetActorRotation(NewRotation);
 		if (IsDashing)
 		{
 			GetCharacterMovement()->GravityScale = 0.0f;
@@ -200,7 +212,7 @@ void ABirdPlayer::CameraMovement()
 	if (bRespawning) return;
 	FVector NoHeightVelocity = GetVelocity();
 	NoHeightVelocity.Z = 0.0f;
-	if (!HasMovedCamera || NoHeightVelocity.Size() <= 0.0f)
+	if (!HasMovedCamera)//|| NoHeightVelocity.Size() <= 0.0f)
 	{
 		if (!CameraHandle.IsValid() && !LerpCamera)
 			GetWorldTimerManager().SetTimer(CameraHandle, this, &ABirdPlayer::CameraLerpCheck, CameraLerpTimeout, false);
@@ -269,7 +281,9 @@ void ABirdPlayer::CameraStillLerpCheck()
 void ABirdPlayer::MoveForward(float Value)
 {
 	// find out which way is forward
-	const FRotator Rotation = Controller->GetControlRotation();
+
+
+	const FRotator Rotation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraRotation();//GetViewTarget()->GetActorRotation();// Controller->GetControlRotation();
 	if (bIsGliding && Value >= 0)
 	{
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -277,13 +291,23 @@ void ABirdPlayer::MoveForward(float Value)
 		AddMovementInput(Direction, 1);
 	}
 
-	if (!bInputEnabled) return;
-	if ((Controller != NULL) && (Value != 0.0f))
+	if (!bInputEnabled) return;	
+	if (bClimbingVines && (Value != 0.0f))
+	{
+		GetCharacterMovement()->GravityScale = 0;
+		const FVector Direction = FVector(0, 0, 1);
+		
+		AddMovementInput(Direction, Value);
+		UE_LOG(LogTemp, Warning, TEXT("UP UP UP"));
+	}
+	else if ((Controller != NULL) && (Value != 0.0f))
 	{
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		//const FVector Direction = FVector(0, 0, 1);
+		UE_LOG(LogTemp, Warning, TEXT("Forward: %s"), *Direction.ToString());
 		AddMovementInput(Direction, Value);
 
 		//LerpCamera = false;
@@ -293,14 +317,22 @@ void ABirdPlayer::MoveForward(float Value)
 void ABirdPlayer::MoveRight(float Value)
 {
 	if (!bInputEnabled) return;
-	if ((Controller != NULL) && (Value != 0.0f))
+	if (bClimbingVines && (Value != 0.0f))
+	{
+		GetCharacterMovement()->GravityScale = 0;
+		const FVector Direction = DirectionToVine.RotateAngleAxis(90, FVector(0, 0, 1));
+
+		AddMovementInput(Direction, Value);
+		UE_LOG(LogTemp, Warning, TEXT("SIDEO"));
+	}
+	else if ((Controller != NULL) && (Value != 0.0f))
 	{
 		// find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator Rotation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraRotation();// GetViewTarget()->GetActorRotation();// Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		UE_LOG(LogTemp, Warning, TEXT("Right: %s"), *Direction.ToString());
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 
@@ -311,11 +343,23 @@ void ABirdPlayer::MoveRight(float Value)
 void ABirdPlayer::StartJump()
 {
 	if (!bInputEnabled) return;
+	if (bClimbingVines)
+	{
+		//AddMovementInput(-DirectionToVine, 5.0f);
+		//GetCharacterMovement()->AddForce(-DirectionToVine * 100.0f);
+		bClimbingVines = false;
+		//BirdRef -> HasDoubleJumped = false;
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	}
+
 	SwitchGlide(false);
 	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
 	JumpHeld = true;
 
+	
 	if (GetCharacterMovement()->IsFalling())
 	{
 		if (HasDoubleJumped) return;
@@ -349,6 +393,7 @@ void ABirdPlayer::ApplyDoubleJump()
 {
 	GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
 	Jump();
+	this->bSimGravityDisabled = false;
 	//JumpHeld = true;
 	HasDoubleJumped = true;
 }
@@ -360,6 +405,8 @@ void ABirdPlayer::Death()
 	// Disable Control
 	// Disable Movement
 	// Invisible
+	if (!BirdControllerRef)
+		BirdControllerRef = Cast<ABirdController>(GetController());
 	BirdControllerRef->RemoveCurrentCollectables();
 	DeathParticleSystem->Activate();
 	bRespawning = true;
@@ -515,6 +562,8 @@ void ABirdPlayer::InputDelayer()
 
 void ABirdPlayer::ReplenishRebase()
 {
+	if (!this) { return; }
+
 	HungerLevel = 1.0f;
 	if (BirdControllerRef) BirdControllerRef->ConfirmCollectables();
 	else

@@ -41,7 +41,7 @@ void ABirdController::RemoveCurrentCollectables()
 {
 	for (int i = 0; i < CurrentCollectables.Num(); i++)
 	{
-		CurrentCollectables[i]->RespawnCollectable();
+		if (CurrentCollectables[i]) CurrentCollectables[i]->RespawnCollectable();
 	}
 	CurrentCollectables.Empty();
 }
@@ -57,6 +57,7 @@ void ABirdController::Respawn()
 
 void ABirdController::AddNewCheckpoint(AActor * NewCheckpoint)
 {
+	if (!NewCheckpoint) { return; }
 	CurrentCheckpoint = NewCheckpoint;
 	Cast<ABirdPlayer>(GetCharacter())->ReplenishRebase();
 	UE_LOG(LogTemp, Warning, TEXT("New checkpoint set %s"), *NewCheckpoint->GetFName().ToString());
