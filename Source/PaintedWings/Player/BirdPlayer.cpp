@@ -114,6 +114,14 @@ void ABirdPlayer::BeginPlay()
 void ABirdPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (fInvincibility > 0)
+	{
+		fInvincibility -= DeltaTime;
+	}
+	if (iHealth <= 0)
+	{
+		Death();
+	}
 
 	HungerLevel -= HungerLossRate * DeltaTime;
 	if ((HungerLevel <= 0.0f || GetActorLocation().Z < DeathHeight) && !bRespawning)
