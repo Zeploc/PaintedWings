@@ -40,7 +40,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = State)
 		bool bClimbingVines;
-
+	void Death();
 
 protected:
 	// Called when the game starts or when spawned
@@ -79,7 +79,6 @@ protected:
 	FTimerHandle RespawnHandle;
 	FTimerHandle CameraHandle;
 	FTimerHandle CameraPlayerStillHandle;
-	void Death();
 	bool bRespawning = false;
 	void StartGlide();
 	bool JumpHeld = false;

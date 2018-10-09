@@ -52,6 +52,12 @@ void ABeeMcGee::Tick(float DeltaTime)
 
 		}
 	}
+	else
+	{
+		FVector Direction = OriginalLocation - this->GetActorLocation();
+		Direction.Normalize();
+		AddMovementInput(Direction, 1.0);
+	}
 }
 
 // Called to bind functionality to input
@@ -91,7 +97,7 @@ void ABeeMcGee::OnKillOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor 
 	{
 		if (BirdRef->fInvincibility <= 0)
 		{
-			bCanMove = false;
+			//bCanMove = false;
 			BirdRef->fInvincibility = 2.0f;
 			BirdRef->iHealth -= 1;
 			//FVector LaunchDir = GetActorLocation() - BirdRef->GetActorLocation();
