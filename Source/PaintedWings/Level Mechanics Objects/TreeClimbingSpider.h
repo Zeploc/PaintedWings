@@ -1,54 +1,45 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-#include "Engine/Public/TimerManager.h"
-
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "BeeMcGee.generated.h"
+#include "TreeClimbingSpider.generated.h"
 
 
-class USphereComponent;
+class UBoxComponent;
 
 UCLASS()
-class PAINTEDWINGS_API ABeeMcGee : public ACharacter
+class PAINTEDWINGS_API ATreeClimbingSpider : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	ABeeMcGee();
+	ATreeClimbingSpider();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USphereComponent* BeeTrigger;
-	FVector OriginalLocation;
+		UBoxComponent* TriggerBox;
+	FVector vOriginalLocation;
 	class ABirdPlayer* PlayerRef;
-	bool bCanMove;
-	FTimerHandle FuzeTimerHandle;
+
+	TArray<AActor*> ActorArray;
 public:	
 	// Called every frame
-	bool bIsFastBoi;
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	void ResetMovment();
 
 	
+
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
 			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UFUNCTION()
-		void OnKillOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
-			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-		void OnKillOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };
