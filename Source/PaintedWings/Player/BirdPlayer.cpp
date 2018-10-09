@@ -401,7 +401,6 @@ void ABirdPlayer::ApplyDoubleJump()
 {
 	GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
 	Jump();
-	this->bSimGravityDisabled = false;
 	//JumpHeld = true;
 	HasDoubleJumped = true;
 }
