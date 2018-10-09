@@ -12,6 +12,7 @@
 #include "Engine.h"
 #include "EngineUtils.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "ClimbableVines.h"
 
 
 #include "playerCheckpointMechanics.h"
@@ -332,6 +333,7 @@ void ABirdPlayer::MoveRight(float Value)
 
 		AddMovementInput(Direction, Value);
 		UE_LOG(LogTemp, Warning, TEXT("SIDEO"));
+
 	}
 	else if ((Controller != NULL) && (Value != 0.0f))
 	{

@@ -14,6 +14,7 @@ AClimbableVines::AClimbableVines()
 	PrimaryActorTick.bCanEverTick = true;
 
 	VinesTrigger = CreateDefaultSubobject<UBoxComponent>("Box");
+	SetRootComponent(VinesTrigger);
 	VinesTrigger->OnComponentBeginOverlap.AddDynamic(this, &AClimbableVines::OnOverlapBegin);
 	VinesTrigger->OnComponentEndOverlap.AddDynamic(this, &AClimbableVines::OnOverlapEnd);
 
@@ -23,7 +24,7 @@ AClimbableVines::AClimbableVines()
 void AClimbableVines::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -39,6 +40,7 @@ void AClimbableVines::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActo
 	if (BirdRef)
 	{
 		BirdRef -> bClimbingVines = true;
+		BirdRef->ClimbRef = this;
 		BirdRef->JumpCurrentCount = 1;
 		BirdRef->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 		BirdRef->GetCharacterMovement()->bOrientRotationToMovement = false;
@@ -59,6 +61,10 @@ void AClimbableVines::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor 
 	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
 	if (BirdRef)
 	{
+		BirdRef->bClimbingVines = false;
+		//BirdRef -> HasDoubleJumped = false;
+		BirdRef->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+		BirdRef->GetCharacterMovement()->bOrientRotationToMovement = true;
 		//BirdRef -> bClimbingVines = false;
 		////BirdRef -> HasDoubleJumped = false;
 		//BirdRef->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);

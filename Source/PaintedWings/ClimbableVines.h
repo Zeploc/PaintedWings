@@ -25,6 +25,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* VinesTrigger;
 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

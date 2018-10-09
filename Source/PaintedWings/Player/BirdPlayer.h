@@ -231,6 +231,7 @@ public:
 	}
 
 	FVector DirectionToVine;
+	class AClimbableVines* ClimbRef;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* platformMesh;
