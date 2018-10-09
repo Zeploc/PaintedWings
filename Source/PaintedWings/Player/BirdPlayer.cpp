@@ -562,6 +562,8 @@ void ABirdPlayer::InputDelayer()
 
 void ABirdPlayer::ReplenishRebase()
 {
+	if (!this) { return; }
+
 	HungerLevel = 1.0f;
 	if (BirdControllerRef) BirdControllerRef->ConfirmCollectables();
 	else
