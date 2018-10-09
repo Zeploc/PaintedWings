@@ -18,6 +18,8 @@ class PAINTEDWINGS_API ABirdPlayer : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABirdPlayer();
+	int iHealth = 3;
+	float fInvincibility = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UCameraComponent* ThirdPersonCamera;
