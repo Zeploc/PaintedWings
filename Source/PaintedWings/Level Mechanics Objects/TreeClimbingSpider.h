@@ -27,6 +27,8 @@ protected:
 	class ABirdPlayer* PlayerRef;
 
 	TArray<AActor*> ActorArray;
+
+	bool bCanKill;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

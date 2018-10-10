@@ -27,17 +27,20 @@ void ATreeClimbingSpider::BeginPlay()
 {
 	Super::BeginPlay();
 	vOriginalLocation = this->GetActorLocation();
+	bCanKill = true;
 }
 
 // Called every frame
 void ATreeClimbingSpider::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (PlayerRef)
+	if (PlayerRef != nullptr)
 	{
+		if (PlayerRef->bRespawning) { UE_LOG(LogTemp, Warning, TEXT("Respawning")); return; };
 		FVector Direction = PlayerRef->GetActorLocation() - this->GetActorLocation();
 		Direction.Normalize();
 		AddMovementInput(Direction, 1.0);
+		UE_LOG(LogTemp, Warning, TEXT("MOVING"));
 	}
 	else
 	{
@@ -49,8 +52,11 @@ void ATreeClimbingSpider::Tick(float DeltaTime)
 		{
 			if (ABirdPlayer* BirdRef = Cast<ABirdPlayer>(ActorArray[i]))
 			{
+				if (BirdRef->bRespawning) { return; };
 				UE_LOG(LogTemp, Warning, TEXT("FOLLOW"));
 				PlayerRef = BirdRef;
+				this->SetActorLocation(vOriginalLocation);
+				bCanKill = true;
 			}
 		}
 	}
@@ -67,10 +73,11 @@ void ATreeClimbingSpider::SetupPlayerInputComponent(UInputComponent* PlayerInput
 void ATreeClimbingSpider::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
-	if (BirdRef)
+	if (BirdRef && !BirdRef->bRespawning && bCanKill)
 	{
 		BirdRef->Death();
-		this->SetActorLocation(vOriginalLocation);
+		PlayerRef = nullptr;
+		bCanKill = false;
 	}
 }
 
@@ -79,7 +86,7 @@ void ATreeClimbingSpider::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AAc
 	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
 	if (BirdRef)
 	{
-		
+		PlayerRef = nullptr;
 	}
 }
 
