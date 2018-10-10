@@ -50,6 +50,7 @@ void AmyCheckpointMechanics::OnOverlapBegin(UPrimitiveComponent * OverlappedComp
 	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
 	if (BirdRef)
 	{
+		IsSaved = true;
 		UE_LOG(LogTemp, Warning, TEXT("Saving Spawn Point"));
 		if (!BirdRef->IsRespawning())
 			Cast<ABirdController>(GetWorld()->GetFirstPlayerController())->AddNewCheckpoint(this);
