@@ -32,6 +32,7 @@ protected:
 	FTimerHandle FuzeTimerHandle;
 public:	
 	// Called every frame
+	bool bIsFastBoi;
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input

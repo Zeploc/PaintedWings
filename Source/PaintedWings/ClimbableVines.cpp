@@ -14,6 +14,7 @@ AClimbableVines::AClimbableVines()
 	PrimaryActorTick.bCanEverTick = true;
 
 	VinesTrigger = CreateDefaultSubobject<UBoxComponent>("Box");
+	SetRootComponent(VinesTrigger);
 	VinesTrigger->OnComponentBeginOverlap.AddDynamic(this, &AClimbableVines::OnOverlapBegin);
 	VinesTrigger->OnComponentEndOverlap.AddDynamic(this, &AClimbableVines::OnOverlapEnd);
 
@@ -23,7 +24,7 @@ AClimbableVines::AClimbableVines()
 void AClimbableVines::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -39,6 +40,7 @@ void AClimbableVines::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActo
 	if (BirdRef)
 	{
 		BirdRef -> bClimbingVines = true;
+		BirdRef->ClimbRef = this;
 		BirdRef->JumpCurrentCount = 1;
 		BirdRef->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 		BirdRef->GetCharacterMovement()->bOrientRotationToMovement = false;
@@ -48,6 +50,7 @@ void AClimbableVines::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActo
 		NewRotation.Yaw = GetActorRightVector().Rotation().Yaw - 180;
 		NewRotation.Pitch += 35.0;
 		BirdRef->SetActorRotation(NewRotation);
+		BirdRef->VineRotation = NewRotation;
 		BirdRef -> HasDoubleJumped = false;
 		BirdRef->bSimGravityDisabled = true;
 		UE_LOG(LogTemp, Warning, TEXT("VinesEntering: %s"), BirdRef->HasDoubleJumped ? TEXT("true") : TEXT("false"));
@@ -59,11 +62,18 @@ void AClimbableVines::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor 
 	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
 	if (BirdRef)
 	{
-		//BirdRef -> bClimbingVines = false;
-		////BirdRef -> HasDoubleJumped = false;
-		//BirdRef->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-		//BirdRef->bSimGravityDisabled = false;
-		//UE_LOG(LogTemp, Warning, TEXT("VinesLeaving"));
+		if (BirdRef->ClimbRef == this)
+		{
+			BirdRef->bClimbingVines = false;
+			//BirdRef -> HasDoubleJumped = false;
+			BirdRef->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+			BirdRef->GetCharacterMovement()->bOrientRotationToMovement = true;
+			/*if (BirdRef->GetActorLocation().Z > GetActorLocation().Z)
+			{
+				BirdRef->LaunchCharacter(FVector(0, 0, 300), true, true);
+			}*/
+			BirdRef->LaunchCharacter(FVector(0, 0, 300), true, true);
+		}
 	}
 }
 
