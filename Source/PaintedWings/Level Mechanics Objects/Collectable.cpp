@@ -38,7 +38,7 @@ void ACollectable::Tick(float DeltaTime)
 void ACollectable::OnCompOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	ABirdController* ControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
-	if (ControllerRef && CollectableMesh->IsVisible())
+	if (ControllerRef && CollectableMesh->IsVisible() && Cast<ABirdPlayer>(OtherActor))
 	{
 		ControllerRef->AddCollectablePoint(this);
 		CollectableMesh->SetVisibility(false);

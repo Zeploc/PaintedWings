@@ -44,7 +44,13 @@ void ABeeMcGee::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (PlayerRef)
 	{
-		if (Cast<ABirdPlayer>(PlayerRef) && bCanMove)
+		if (PlayerRef->bHiding)
+		{
+			FVector Direction = OriginalLocation - this->GetActorLocation();
+			Direction.Normalize();
+			AddMovementInput(Direction, 1.0);
+		}
+		if (Cast<ABirdPlayer>(PlayerRef) && bCanMove && !PlayerRef->bHiding)
 		{
 			FVector Direction = PlayerRef->GetActorLocation() - this->GetActorLocation();
 			Direction.Normalize();

@@ -4,7 +4,6 @@
 #include "Components/BoxComponent.h"
 #include "PaintedWings/Player/BirdPlayer.h"
 #include "Engine/Classes/Kismet/GameplayStatics.h"
-#include "PaintedWings/Player/BirdPlayer.h"
 #include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
@@ -28,6 +27,7 @@ void ATreeClimbingSpider::BeginPlay()
 	Super::BeginPlay();
 	vOriginalLocation = this->GetActorLocation();
 	bCanKill = true;
+	fDefaultSpeed = GetCharacterMovement()->MaxFlySpeed;
 }
 
 // Called every frame
@@ -37,6 +37,8 @@ void ATreeClimbingSpider::Tick(float DeltaTime)
 	if (PlayerRef != nullptr)
 	{
 		if (PlayerRef->bRespawning) { UE_LOG(LogTemp, Warning, TEXT("Respawning")); return; };
+		FVector lockXY = FVector(PlayerRef->GetActorLocation().X, PlayerRef->GetActorLocation().Y, this->GetActorLocation().Z);
+		this->SetActorLocation(lockXY);
 		FVector Direction = PlayerRef->GetActorLocation() - this->GetActorLocation();
 		Direction.Normalize();
 		AddMovementInput(Direction, 1.0);
@@ -68,6 +70,11 @@ void ATreeClimbingSpider::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ATreeClimbingSpider::SetMovementSpeed(float _speed)
+{
+	GetCharacterMovement()->MaxFlySpeed = _speed;
 }
 
 void ATreeClimbingSpider::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
