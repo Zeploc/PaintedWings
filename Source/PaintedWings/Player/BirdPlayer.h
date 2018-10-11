@@ -20,7 +20,8 @@ public:
 	ABirdPlayer();
 	int iHealth = 3;
 	float fInvincibility = 0;
-
+	bool bRespawning = false;
+	bool bHiding = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UCameraComponent* ThirdPersonCamera;
 
@@ -79,7 +80,7 @@ protected:
 	FTimerHandle RespawnHandle;
 	FTimerHandle CameraHandle;
 	FTimerHandle CameraPlayerStillHandle;
-	bool bRespawning = false;
+
 	void StartGlide();
 	bool JumpHeld = false;
 	bool bCanGlide = true;

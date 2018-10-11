@@ -134,7 +134,7 @@ void ABirdPlayer::Tick(float DeltaTime)
 	{
 		GetCharacterMovement()->GravityScale = 0;
 		SetActorRotation(VineRotation);
-		UE_LOG(LogTemp, Warning, TEXT("NOGRAV: %f"), GetCharacterMovement()->GravityScale);
+		//UE_LOG(LogTemp, Warning, TEXT("NOGRAV: %f"), GetCharacterMovement()->GravityScale);
 	}
 	else if (bIsGliding)
 	{
@@ -308,7 +308,7 @@ void ABirdPlayer::MoveForward(float Value)
 		const FVector Direction = FVector(0, 0, 1);
 		
 		AddMovementInput(Direction, Value);
-		UE_LOG(LogTemp, Warning, TEXT("UP UP UP"));
+		//UE_LOG(LogTemp, Warning, TEXT("UP UP UP"));
 	}
 	else if ((Controller != NULL) && (Value != 0.0f))
 	{
@@ -317,7 +317,7 @@ void ABirdPlayer::MoveForward(float Value)
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		//const FVector Direction = FVector(0, 0, 1);
-		UE_LOG(LogTemp, Warning, TEXT("Forward: %s"), *Direction.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Forward: %s"), *Direction.ToString());
 		AddMovementInput(Direction, Value);
 
 		//LerpCamera = false;
@@ -333,7 +333,7 @@ void ABirdPlayer::MoveRight(float Value)
 		const FVector Direction = DirectionToVine.RotateAngleAxis(90, FVector(0, 0, 1));
 
 		AddMovementInput(Direction, Value);
-		UE_LOG(LogTemp, Warning, TEXT("SIDEO"));
+		//UE_LOG(LogTemp, Warning, TEXT("SIDEO"));
 
 	}
 	else if ((Controller != NULL) && (Value != 0.0f))
@@ -343,7 +343,7 @@ void ABirdPlayer::MoveRight(float Value)
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		UE_LOG(LogTemp, Warning, TEXT("Right: %s"), *Direction.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Right: %s"), *Direction.ToString());
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 
