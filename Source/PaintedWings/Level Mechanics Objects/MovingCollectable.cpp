@@ -19,7 +19,7 @@ void AMovingCollectable::BeginPlay()
 {
 	Super::BeginPlay();
 	SphereCollision->OnComponentBeginOverlap.Clear();
-	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AMovingCollectable::OnCompOverlap);
+	//SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AMovingCollectable::OnCompOverlap);
 
 	m_TBox->OnComponentBeginOverlap.AddDynamic(this, &AMovingCollectable::OnBoxOverlapBegin);
 
@@ -64,18 +64,18 @@ void AMovingCollectable::RespawnCollectable()
 	//UE_LOG(LogTemp, Warning, TEXT("Moving Respawn"));
 }
 
-void AMovingCollectable::OnCompOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	Super::OnCompOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-	//UE_LOG(LogTemp, Warning, TEXT("SphereOver"));
-	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
-	if (BirdRef && !BirdRef->bRespawning)
-	{
-		bMoving = false;
-		//UE_LOG(LogTemp, Warning, TEXT("HIT"));
-	}
-
-}
+//void AMovingCollectable::OnCompOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+//{
+//	Super::OnCompOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+//	//UE_LOG(LogTemp, Warning, TEXT("SphereOver"));
+//	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
+//	if (BirdRef && !BirdRef->bRespawning)
+//	{
+//		bMoving = false;
+//		//UE_LOG(LogTemp, Warning, TEXT("HIT"));
+//	}
+//
+//}
 
 void AMovingCollectable::OnBoxOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {

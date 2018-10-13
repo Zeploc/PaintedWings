@@ -14,7 +14,7 @@ ACollectable::ACollectable()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Colission Sphere"));
-	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ACollectable::OnCompOverlap);
+	//SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ACollectable::OnCompOverlap);
 	RootComponent = SphereCollision;
 	CollectableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Collectable Mesh"));
 	OnDestroyed.AddDynamic(this, &ACollectable::OnCollectableDestroyed);
@@ -35,15 +35,15 @@ void ACollectable::Tick(float DeltaTime)
 
 }
 
-void ACollectable::OnCompOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	ABirdController* ControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
-	if (ControllerRef && CollectableMesh->IsVisible() && Cast<ABirdPlayer>(OtherActor))
-	{
-		ControllerRef->AddCollectablePoint(this);
-		CollectableMesh->SetVisibility(false);
-	}
-}
+//void ACollectable::OnCompOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+//{
+//	ABirdController* ControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
+//	if (ControllerRef && CollectableMesh->IsVisible() && Cast<ABirdPlayer>(OtherActor))
+//	{
+//		//ControllerRef->AddCollectablePoint(this);
+//		//CollectableMesh->SetVisibility(false);
+//	}
+//}
 
 void ACollectable::OnCollectableDestroyed(AActor* Act)
 {

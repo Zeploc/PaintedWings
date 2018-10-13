@@ -30,11 +30,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class USphereComponent* SphereCollision;
 
-	UFUNCTION()
+	/*UFUNCTION()
 		virtual void OnCompOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
+*/
 	UFUNCTION()
 		void OnCollectableDestroyed(AActor* Act);
 
 	virtual void RespawnCollectable();
+
+
 };
