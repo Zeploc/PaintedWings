@@ -24,15 +24,10 @@ public:
 		USoundBase* SoundBGM2;
 
 public:
-	void AddCollectablePoint(class ACollectable* Col);
-	void ConfirmCollectables();
-	void RemoveCurrentCollectables();
 	void Respawn();
 	void AddNewCheckpoint(AActor* NewCheckpoint);
 
 
-	UFUNCTION(BlueprintCallable)
-		int GetCollectableCount();
 
 protected:
 	// Called when the game starts or when spawned
@@ -40,8 +35,6 @@ protected:
 	
 	class ABirdPlayer* BirdPlayerRef;
 	
-	int CollectableCount;
-	TArray<ACollectable*> CurrentCollectables;
 
 	UPROPERTY(EditAnywhere)
 		AActor* CurrentCheckpoint;

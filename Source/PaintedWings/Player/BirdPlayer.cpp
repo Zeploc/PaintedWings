@@ -420,7 +420,6 @@ void ABirdPlayer::Death()
 	// Invisible
 	if (!BirdControllerRef)
 		BirdControllerRef = Cast<ABirdController>(GetController());
-	BirdControllerRef->RemoveCurrentCollectables();
 	DeathParticleSystem->Activate();
 	bRespawning = true;
 	//GetMesh()->SetVisibility(false);
@@ -578,9 +577,6 @@ void ABirdPlayer::ReplenishRebase()
 	if (!this) { return; }
 
 	HungerLevel = 1.0f;
-	if (BirdControllerRef) BirdControllerRef->ConfirmCollectables();
-	else
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, "CONTROLLER NOT FOUND");
 }
 
 

@@ -14,7 +14,6 @@ ABirdController::ABirdController()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CollectableCount = 0;
 }
 
 // Called when the game starts or when spawned
@@ -26,25 +25,7 @@ void ABirdController::BeginPlay()
 	UGameplayStatics::PlaySound2D(GetWorld(), SoundBGM);
 }
 
-void ABirdController::ConfirmCollectables()
-{
-	if (CurrentCollectables.Num() <= 0) return;
-	for (int i = 0; i < CurrentCollectables.Num(); i++)
-	{
-		CurrentCollectables[i]->Destroy();
-		CollectableCount++;
-	}
-	CurrentCollectables.Empty();
-}
 
-void ABirdController::RemoveCurrentCollectables()
-{
-	for (int i = 0; i < CurrentCollectables.Num(); i++)
-	{
-		if (CurrentCollectables[i]) CurrentCollectables[i]->RespawnCollectable();
-	}
-	CurrentCollectables.Empty();
-}
 
 void ABirdController::Respawn()
 {	
@@ -61,17 +42,4 @@ void ABirdController::AddNewCheckpoint(AActor * NewCheckpoint)
 	CurrentCheckpoint = NewCheckpoint;
 	Cast<ABirdPlayer>(GetCharacter())->ReplenishRebase();
 	UE_LOG(LogTemp, Warning, TEXT("New checkpoint set %s"), *NewCheckpoint->GetFName().ToString());
-}
-
-void ABirdController::AddCollectablePoint(class ACollectable* Col)
-{
-	if (!CurrentCollectables.Contains(Col))
-	{
-		CurrentCollectables.Add(Col);
-	}
-}
-
-int ABirdController::GetCollectableCount()
-{
-	return CollectableCount;
 }
