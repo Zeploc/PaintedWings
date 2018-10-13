@@ -40,8 +40,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UBoxComponent* m_TBox;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool fook = false;
 
 private:
 	FVector OriginLocation;
