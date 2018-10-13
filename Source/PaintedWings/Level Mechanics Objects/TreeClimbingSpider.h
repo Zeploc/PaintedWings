@@ -29,6 +29,7 @@ protected:
 	TArray<AActor*> ActorArray;
 	float fDefaultSpeed;
 	bool bCanKill;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -46,4 +47,10 @@ public:
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		AActor* LogCenter;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float Speed = 0.0f;
 };

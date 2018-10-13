@@ -6,6 +6,8 @@
 #include "Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
+
 // Sets default values
 ATreeClimbingSpider::ATreeClimbingSpider()
 {
@@ -37,12 +39,26 @@ void ATreeClimbingSpider::Tick(float DeltaTime)
 	if (PlayerRef != nullptr)
 	{
 		if (PlayerRef->bRespawning) { UE_LOG(LogTemp, Warning, TEXT("Respawning")); return; };
-		FVector lockXY = FVector(PlayerRef->GetActorLocation().X, PlayerRef->GetActorLocation().Y, this->GetActorLocation().Z);
-		this->SetActorLocation(lockXY);
-		FVector Direction = PlayerRef->GetActorLocation() - this->GetActorLocation();
-		Direction.Normalize();
-		AddMovementInput(Direction, 1.0);
-		UE_LOG(LogTemp, Warning, TEXT("MOVING"));
+
+		FVector StartLocation = LogCenter->GetActorLocation();
+		StartLocation.Z = PlayerRef->GetActorLocation().Z;
+		FVector DirectionToWallBelowPlayer = PlayerRef->GetActorLocation() - StartLocation;
+		DirectionToWallBelowPlayer.Normalize();
+		FVector StartTraceLocation = LogCenter->GetActorLocation();
+		StartTraceLocation.Z = GetActorLocation().Z;
+		FVector EndTraceLocation = StartTraceLocation + DirectionToWallBelowPlayer * 2000.0f;
+				
+		
+		FHitResult LogHitResult;
+		if (GetWorld()->LineTraceSingleByChannel(LogHitResult, StartTraceLocation, EndTraceLocation, ECC_GameTraceChannel2))
+		{
+			Speed = GetCharacterMovement()->GetMaxSpeed() + (GetActorLocation() - LogHitResult.Location).Size();
+			SetActorLocation(LogHitResult.Location);
+			SetActorRotation(DirectionToWallBelowPlayer.Rotation());
+		}
+
+
+		AddMovementInput(FVector(0, 0, 1), 1.0);
 	}
 	else
 	{

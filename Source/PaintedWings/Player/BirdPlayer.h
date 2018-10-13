@@ -83,7 +83,6 @@ protected:
 
 	void StartGlide();
 	bool JumpHeld = false;
-	bool bCanGlide = true;
 	bool bHasGlided = false;
 	bool bTouchingNectar = false;
 
@@ -142,6 +141,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void MoveToCheckpoint();
 
+	UPROPERTY(BlueprintReadWrite, Category = "Gliding")
+		bool bCanGlide = true;
 	UPROPERTY(BlueprintReadOnly, Category = "Gliding")
 		bool bIsGliding = false;
 
