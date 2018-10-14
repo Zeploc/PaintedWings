@@ -247,5 +247,23 @@ public:
 		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
 		bool bLookAtNext = false;
-		
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
+		float ZoomedFOV = 50.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
+		float NormalFOV = 90.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
+		float ZoomInSpeed = 5.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
+		float ZoomOutSpeed = 5.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
+		float ExtraPitchWhenLooking = 15.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
+		float CameraHeightWhenLooking = 100.0f;
+
 };

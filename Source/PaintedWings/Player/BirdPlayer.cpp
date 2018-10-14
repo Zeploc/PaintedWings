@@ -103,14 +103,16 @@ void ABirdPlayer::BeginPlay()
 	playerCapsuleTrigger->OnComponentEndOverlap.AddDynamic(this, &ABirdPlayer::OnOverlapEnd);
 	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
 
+	NormalFOV = ThirdPersonCamera->FieldOfView;
+
 	//// CAN't USE "GETCONTROLLER()" When restart playing was used (It must create it then posses, so at time of begin play, not have control)
 	BirdControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
 	if (!BirdControllerRef)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Uh oh NO CONTROLLER"));
 	}
-	else
-		DefaultCameraPitch = BirdControllerRef->GetControlRotation().Pitch;
+	//else
+		//DefaultCameraPitch = BirdControllerRef->GetControlRotation().Pitch;
 }
 
 // Called every frame
@@ -222,11 +224,15 @@ void ABirdPlayer::MouseLookUp(float Value)
 void ABirdPlayer::LookAtNext()
 {
 	bLookAtNext = true;
+	LerpCamera = false;
 }
 
 void ABirdPlayer::StopLookAtNext()
 {
 	bLookAtNext = false;
+	HasMovedCamera = false;
+	LerpCamera = true;
+	//ThirdPersonCamera->SetRelativeLocation(FVector(0, 0, 0));
 }
 
 void ABirdPlayer::CameraMovement()
@@ -236,25 +242,30 @@ void ABirdPlayer::CameraMovement()
 	NoHeightVelocity.Z = 0.0f;
 	if (!HasMovedCamera && bLookAtNext && BirdControllerRef->CurrentLookAt < BirdControllerRef->LookAtNextActors.Num())
 	{
-		FRotator CurrentControlRotation = GetController()->GetControlRotation();
-		FRotator FacingRotation = CurrentControlRotation;
-
+		LerpCamera = false;
+		// Rotation
 		FVector NextLocation = BirdControllerRef->LookAtNextActors[BirdControllerRef->CurrentLookAt]->GetActorLocation();
-		
-		//FacingRotation = UKismetMathLibrary::FindLookAtRotation(ThirdPersonCamera->GetComponentLocation(), NextLocation);
-		FacingRotation = (NextLocation - ThirdPersonCamera->GetComponentLocation()).Rotation();
-		//FacingRotation.Yaw = GetMesh()->GetComponentRotation().Yaw;
-		FacingRotation.Pitch += 10.0f;
 
-		float LerpSpeed = 5.0f;
-		if ((CurrentControlRotation.Vector() - FacingRotation.Vector()).Size() > 0.001f) CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, LerpSpeed * GetWorld()->DeltaTimeSeconds);
-		else CurrentControlRotation = FacingRotation;
+		FRotator CurrentControlRotation = GetController()->GetControlRotation();
+		FRotator FacingRotation = FacingRotation = (NextLocation - ThirdPersonCamera->GetComponentLocation()).Rotation();
+		FacingRotation.Pitch += ExtraPitchWhenLooking;
+
+		CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, ZoomInSpeed * GetWorld()->DeltaTimeSeconds);
 		GetController()->SetControlRotation(CurrentControlRotation);
+
+		// Fov
+		ThirdPersonCamera->FieldOfView = FMath::Lerp(ThirdPersonCamera->FieldOfView, ZoomedFOV, ZoomInSpeed * GetWorld()->DeltaTimeSeconds);
+
+		// Camera Height
+		FVector NewLocation = FVector(0, 0, CameraHeightWhenLooking);
+		FVector LerpedLocation = FMath::Lerp(ThirdPersonCamera->RelativeLocation, NewLocation, ZoomInSpeed * GetWorld()->DeltaTimeSeconds);
+		ThirdPersonCamera->SetRelativeLocation(LerpedLocation);
 	}
 	else if (!HasMovedCamera)//|| NoHeightVelocity.Size() <= 0.0f)
 	{
 		if (!CameraHandle.IsValid() && !LerpCamera)
 			GetWorldTimerManager().SetTimer(CameraHandle, this, &ABirdPlayer::CameraLerpCheck, CameraLerpTimeout, false);
+		
 	}
 	else
 	{
@@ -264,9 +275,21 @@ void ABirdPlayer::CameraMovement()
 		return;
 	}
 
+	if (!bLookAtNext)
+	{
+		if (ThirdPersonCamera->FieldOfView != NormalFOV)
+			ThirdPersonCamera->FieldOfView = FMath::Lerp(ThirdPersonCamera->FieldOfView, NormalFOV, ZoomOutSpeed * GetWorld()->DeltaTimeSeconds);
+
+		if (ThirdPersonCamera->RelativeLocation.Z > 0)
+		{
+			FVector LerpedLocation = FMath::Lerp(ThirdPersonCamera->RelativeLocation, FVector(0, 0, 0), ZoomOutSpeed * GetWorld()->DeltaTimeSeconds);
+			ThirdPersonCamera->SetRelativeLocation(LerpedLocation);
+		}
+	}
+
 	if (LerpCamera)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "WOULD LERP CAMERA");
+		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Green, "LERP CAMERA");
 		FRotator CurrentControlRotation = GetController()->GetControlRotation();
 		GEngine->AddOnScreenDebugMessage(-1, 0.001f, FColor::Purple, GetCapsuleComponent()->GetComponentRotation().ToString());
 		FRotator FacingRotation = CurrentControlRotation;
