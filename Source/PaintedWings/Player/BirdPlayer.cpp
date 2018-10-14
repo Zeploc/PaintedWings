@@ -14,7 +14,6 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "ClimbableVines.h"
 
-
 #include "playerCheckpointMechanics.h"
 #include "EngineUtils.h"
 #include "Components/CapsuleComponent.h"
@@ -76,7 +75,8 @@ void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABirdPlayer::MoveRight);
 
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ABirdPlayer::Dash);
-	PlayerInputComponent->BindAction("LookAtNext", IE_Repeat, this, &ABirdPlayer::LookAtNext);
+	PlayerInputComponent->BindAction("LookAtNext", IE_Pressed, this, &ABirdPlayer::LookAtNext);
+	PlayerInputComponent->BindAction("LookAtNext", IE_Released, this, &ABirdPlayer::StopLookAtNext);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -220,15 +220,24 @@ void ABirdPlayer::MouseLookUp(float Value)
 
 void ABirdPlayer::LookAtNext()
 {
-	if (CurrentLookAt < LookAtNextActors.Num())
-	{
-		HasMovedCamera = true;
+	bLookAtNext = true;
+}
 
+void ABirdPlayer::StopLookAtNext()
+{
+	bLookAtNext = false;
+}
+
+void ABirdPlayer::CameraMovement()
+{
+	if (bRespawning) return;
+	FVector NoHeightVelocity = GetVelocity();
+	NoHeightVelocity.Z = 0.0f;
+	if (bLookAtNext && CurrentLookAt < LookAtNextActors.Num())
+	{
 		FRotator CurrentControlRotation = GetController()->GetControlRotation();
 		FRotator FacingRotation = CurrentControlRotation;
-
-	
-
+		
 		FVector NextLocation = LookAtNextActors[CurrentLookAt]->GetActorLocation();
 		FacingRotation = (NextLocation - ThirdPersonCamera->GetComponentLocation()).Rotation();
 		//FacingRotation.Yaw = GetMesh()->GetComponentRotation().Yaw;
@@ -238,14 +247,7 @@ void ABirdPlayer::LookAtNext()
 		CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, LerpSpeed * GetWorld()->DeltaTimeSeconds);
 		GetController()->SetControlRotation(CurrentControlRotation);
 	}
-}
-
-void ABirdPlayer::CameraMovement()
-{
-	if (bRespawning) return;
-	FVector NoHeightVelocity = GetVelocity();
-	NoHeightVelocity.Z = 0.0f;
-	if (!HasMovedCamera)//|| NoHeightVelocity.Size() <= 0.0f)
+	else if (!HasMovedCamera)//|| NoHeightVelocity.Size() <= 0.0f)
 	{
 		if (!CameraHandle.IsValid() && !LerpCamera)
 			GetWorldTimerManager().SetTimer(CameraHandle, this, &ABirdPlayer::CameraLerpCheck, CameraLerpTimeout, false);

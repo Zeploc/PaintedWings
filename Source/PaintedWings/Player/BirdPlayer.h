@@ -70,6 +70,7 @@ protected:
 	void MouseLookUp(float Value);
 
 	void LookAtNext();
+	void StopLookAtNext();
 
 
 	float NormalGravity;
@@ -105,6 +106,7 @@ protected:
 	void CameraMovement();
 	void CameraLerpCheck();
 	void CameraStillLerpCheck();
+	bool bLookAtNext = false;
 	bool HasMovedCamera = true;
 	bool LerpCamera = false;
 	bool IdleCameraLerp = false;
