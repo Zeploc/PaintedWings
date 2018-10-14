@@ -48,7 +48,8 @@ void ADashWall::Tick(float DeltaTime)
 		if (!PlayerRef) return;
 		FVector XYSpeed = PlayerRef->GetVelocity();
 		XYSpeed.Y = 0.0f;
-		if (FVector::Distance(PlayerRef->GetActorLocation(), GetActorLocation()) < 500.0f && PlayerRef->IsDashing && XYSpeed.Size() > MinimumSpeed)
+		float DistanceFromPlayer = FVector::Distance(PlayerRef->GetActorLocation(), GetActorLocation());
+		if (DistanceFromPlayer < 500.0f && PlayerRef->IsDashing && (XYSpeed.Size() > MinimumSpeed || DistanceFromPlayer <= 100.0f))
 		{
 			CollisionBox->SetCollisionProfileName("OverlapAll");
 		}

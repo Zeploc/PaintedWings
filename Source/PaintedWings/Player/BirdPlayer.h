@@ -69,6 +69,8 @@ protected:
 
 	void MouseLookUp(float Value);
 
+	void LookAtNext();
+
 
 	float NormalGravity;
 	float NormalRotationRate;
@@ -241,4 +243,12 @@ public:
 		UMaterial* MyMaterial;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UMaterialInstanceDynamic* DynMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<AActor*> LookAtNextActors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int CurrentLookAt = 0;
+
+
 };

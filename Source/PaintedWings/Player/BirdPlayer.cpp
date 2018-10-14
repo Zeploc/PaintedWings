@@ -76,6 +76,7 @@ void ABirdPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABirdPlayer::MoveRight);
 
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ABirdPlayer::Dash);
+	PlayerInputComponent->BindAction("LookAtNext", IE_Repeat, this, &ABirdPlayer::LookAtNext);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -215,6 +216,28 @@ void ABirdPlayer::MouseLookUp(float Value)
 {
 	if (Value != 0) HasMovedCamera = true;
 	AddControllerPitchInput(Value);
+}
+
+void ABirdPlayer::LookAtNext()
+{
+	if (CurrentLookAt < LookAtNextActors.Num())
+	{
+		HasMovedCamera = true;
+
+		FRotator CurrentControlRotation = GetController()->GetControlRotation();
+		FRotator FacingRotation = CurrentControlRotation;
+
+	
+
+		FVector NextLocation = LookAtNextActors[CurrentLookAt]->GetActorLocation();
+		FacingRotation = (NextLocation - ThirdPersonCamera->GetComponentLocation()).Rotation();
+		//FacingRotation.Yaw = GetMesh()->GetComponentRotation().Yaw;
+		//FacingRotation.Pitch = DefaultCameraPitch;
+
+		float LerpSpeed = 2.0f;
+		CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, LerpSpeed * GetWorld()->DeltaTimeSeconds);
+		GetController()->SetControlRotation(CurrentControlRotation);
+	}
 }
 
 void ABirdPlayer::CameraMovement()
