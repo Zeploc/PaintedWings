@@ -106,7 +106,6 @@ protected:
 	void CameraMovement();
 	void CameraLerpCheck();
 	void CameraStillLerpCheck();
-	bool bLookAtNext = false;
 	bool HasMovedCamera = true;
 	bool LerpCamera = false;
 	bool IdleCameraLerp = false;
@@ -245,12 +244,8 @@ public:
 		UMaterial* MyMaterial;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UMaterialInstanceDynamic* DynMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<AActor*> LookAtNextActors;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int CurrentLookAt = 0;
-
-
+		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
+		bool bLookAtNext = false;
+		
 };

@@ -18,6 +18,7 @@
 #include "EngineUtils.h"
 #include "Components/CapsuleComponent.h"
 #include "NectarMechanics.h"
+#include "Kismet/KismetMathLibrary.h"
 // Sets default values
 
 ABirdPlayer::ABirdPlayer()
@@ -103,13 +104,13 @@ void ABirdPlayer::BeginPlay()
 	FirstJumpSize = GetCharacterMovement()->JumpZVelocity;
 
 	//// CAN't USE "GETCONTROLLER()" When restart playing was used (It must create it then posses, so at time of begin play, not have control)
-	//BirdControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
-	//if (!BirdControllerRef)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("Uh oh NO CONTROLLER"));
-	//}
-	//else
-	//	DefaultCameraPitch = BirdControllerRef->GetControlRotation().Pitch;
+	BirdControllerRef = Cast<ABirdController>(GetWorld()->GetFirstPlayerController());
+	if (!BirdControllerRef)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Uh oh NO CONTROLLER"));
+	}
+	else
+		DefaultCameraPitch = BirdControllerRef->GetControlRotation().Pitch;
 }
 
 // Called every frame
@@ -233,18 +234,21 @@ void ABirdPlayer::CameraMovement()
 	if (bRespawning) return;
 	FVector NoHeightVelocity = GetVelocity();
 	NoHeightVelocity.Z = 0.0f;
-	if (bLookAtNext && CurrentLookAt < LookAtNextActors.Num())
+	if (!HasMovedCamera && bLookAtNext && BirdControllerRef->CurrentLookAt < BirdControllerRef->LookAtNextActors.Num())
 	{
 		FRotator CurrentControlRotation = GetController()->GetControlRotation();
 		FRotator FacingRotation = CurrentControlRotation;
+
+		FVector NextLocation = BirdControllerRef->LookAtNextActors[BirdControllerRef->CurrentLookAt]->GetActorLocation();
 		
-		FVector NextLocation = LookAtNextActors[CurrentLookAt]->GetActorLocation();
+		//FacingRotation = UKismetMathLibrary::FindLookAtRotation(ThirdPersonCamera->GetComponentLocation(), NextLocation);
 		FacingRotation = (NextLocation - ThirdPersonCamera->GetComponentLocation()).Rotation();
 		//FacingRotation.Yaw = GetMesh()->GetComponentRotation().Yaw;
-		//FacingRotation.Pitch = DefaultCameraPitch;
+		FacingRotation.Pitch += 10.0f;
 
-		float LerpSpeed = 2.0f;
-		CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, LerpSpeed * GetWorld()->DeltaTimeSeconds);
+		float LerpSpeed = 5.0f;
+		if ((CurrentControlRotation.Vector() - FacingRotation.Vector()).Size() > 0.001f) CurrentControlRotation = FMath::Lerp(CurrentControlRotation, FacingRotation, LerpSpeed * GetWorld()->DeltaTimeSeconds);
+		else CurrentControlRotation = FacingRotation;
 		GetController()->SetControlRotation(CurrentControlRotation);
 	}
 	else if (!HasMovedCamera)//|| NoHeightVelocity.Size() <= 0.0f)

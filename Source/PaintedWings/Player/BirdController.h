@@ -28,6 +28,11 @@ public:
 	void AddNewCheckpoint(AActor* NewCheckpoint);
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
+		TMap<int, AActor*> LookAtNextActors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
+		int CurrentLookAt = 0;
 
 protected:
 	// Called when the game starts or when spawned
@@ -38,4 +43,5 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		AActor* CurrentCheckpoint;
+
 };
