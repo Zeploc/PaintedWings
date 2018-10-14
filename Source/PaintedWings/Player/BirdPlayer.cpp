@@ -232,7 +232,6 @@ void ABirdPlayer::StopLookAtNext()
 	bLookAtNext = false;
 	HasMovedCamera = false;
 	LerpCamera = true;
-	//ThirdPersonCamera->SetRelativeLocation(FVector(0, 0, 0));
 }
 
 void ABirdPlayer::CameraMovement()
