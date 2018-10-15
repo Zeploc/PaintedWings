@@ -12,13 +12,12 @@
 AMovingCollectable::AMovingCollectable()
 {
 	m_TBox = CreateDefaultSubobject<UBoxComponent>("Box");
-
 }
 
 void AMovingCollectable::BeginPlay()
 {
 	Super::BeginPlay();
-	SphereCollision->OnComponentBeginOverlap.Clear();
+	//SphereCollision->OnComponentBeginOverlap.Clear();
 	//SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AMovingCollectable::OnCompOverlap);
 
 	m_TBox->OnComponentBeginOverlap.AddDynamic(this, &AMovingCollectable::OnBoxOverlapBegin);
@@ -30,12 +29,18 @@ void AMovingCollectable::BeginPlay()
 	OriginLocation = this->GetActorLocation();
 	iCurrentPoint = 1;
 	UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
+	bForward = true;
 }
 
 void AMovingCollectable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (bMoving)
+
+	if (bRepeating && !bMoving)
+	{
+		bMoving = true;
+	}
+	if (bMoving && bForward)
 	{
 		for (int i = 0; i < MovementPoints.Num(); i++)
 		{
@@ -47,11 +52,18 @@ void AMovingCollectable::Tick(float DeltaTime)
 				MoveTowards(destination, DeltaTime);
 				if ((destination - GetActorLocation()).Size() < 10.0f)
 				{
-					//UE_LOG(LogTemp, Warning, TEXT("Next Point"));
+					UE_LOG(LogTemp, Warning, TEXT("Next Point: "));
 					iCurrentPoint++;
 				}
 			}
 		}
+	}
+	if (iCurrentPoint > MovementPoints.Num() && bRepeating)
+	{
+		iCurrentPoint = 1;
+	}
+	else if (iCurrentPoint> MovementPoints.Num())
+	{
 	}
 }
 
@@ -81,7 +93,7 @@ void AMovingCollectable::OnBoxOverlapBegin(UPrimitiveComponent * OverlappedComp,
 {
 	UE_LOG(LogTemp, Warning, TEXT("BoxOver"));
 	ABirdPlayer* BirdRef = Cast<ABirdPlayer>(OtherActor);
-	if (BirdRef && !BirdRef->bRespawning)
+	if (BirdRef && !BirdRef->bRespawning && bMoving == false)
 	{
 		bMoving = true;
 		UE_LOG(LogTemp, Warning, TEXT("Activated"));
