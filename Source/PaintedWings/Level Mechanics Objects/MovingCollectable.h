@@ -19,7 +19,8 @@ class PAINTEDWINGS_API AMovingCollectable : public ACollectable
 public:
 
 	AMovingCollectable();
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bRepeating;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float fMovementSpeed;
@@ -48,4 +49,5 @@ private:
 
 
 	void MoveTowards(FVector _location, float DeltaTime);
+	bool bForward;
 };
