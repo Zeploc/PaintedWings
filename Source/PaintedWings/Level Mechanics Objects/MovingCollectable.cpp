@@ -16,7 +16,7 @@ AMovingCollectable::AMovingCollectable()
 void AMovingCollectable::BeginPlay()
 {
 	Super::BeginPlay();
-	SphereCollision->OnComponentBeginOverlap.Clear();
+	//SphereCollision->OnComponentBeginOverlap.Clear();
 	//SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AMovingCollectable::OnCompOverlap);
 
 	m_TBox->OnComponentBeginOverlap.AddDynamic(this, &AMovingCollectable::OnBoxOverlapBegin);
