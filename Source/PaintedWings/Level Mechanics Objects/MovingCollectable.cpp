@@ -11,7 +11,8 @@
 
 AMovingCollectable::AMovingCollectable()
 {
-	m_TBox = CreateDefaultSubobject<UBoxComponent>("Box");}
+	m_TBox = CreateDefaultSubobject<UBoxComponent>("Box");
+}
 
 void AMovingCollectable::BeginPlay()
 {
