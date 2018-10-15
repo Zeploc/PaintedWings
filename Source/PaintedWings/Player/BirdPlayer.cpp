@@ -63,6 +63,11 @@ ABirdPlayer::ABirdPlayer()
 	DeathParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Death Particle System"));
 	DeathParticleSystem->SetupAttachment(RootComponent);
 	DeathParticleSystem->bAutoActivate = false;
+
+
+	GlidingAC = CreateDefaultSubobject<UAudioComponent>(TEXT("Glide Audio Component"));
+	GlidingAC->SetUISound(true);
+	GlidingAC->bAutoActivate = false;
 }
 
 // Called to bind functionality to input
@@ -485,6 +490,7 @@ void ABirdPlayer::StartGlide()
 	{     
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Purple, "Start Glide");
 		SwitchGlide(true);
+		GlidingAC->Play();
 	}
 }
 
@@ -542,6 +548,7 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 	}
 	else
 	{
+		GlidingAC->Stop();
 		GetCharacterMovement()->GravityScale = NormalGravity;
 		GetCharacterMovement()->RotationRate.Yaw = NormalRotationRate;
 		GetCharacterMovement()->AirControl = NormalAirControl;

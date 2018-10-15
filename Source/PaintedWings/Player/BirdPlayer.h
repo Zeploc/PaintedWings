@@ -120,6 +120,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 		USoundBase* DashSound;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Sound")
+		UAudioComponent* GlidingAC;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
