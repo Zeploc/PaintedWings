@@ -30,7 +30,7 @@ void ABirdController::BeginPlay()
 	BirdPlayerRef = Cast<ABirdPlayer>(GetCharacter());
 
 	BackgroundMusicAC->SetSound(SoundBGM);
-	BackgroundMusicAC->Play();
+	//BackgroundMusicAC->Play();
 	//UGameplayStatics::PlaySound2D(GetWorld(), SoundBGM);
 }
 

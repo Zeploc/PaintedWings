@@ -408,7 +408,7 @@ void ABirdPlayer::MoveRight(float Value)
 
 void ABirdPlayer::StartJump()
 {
-	if (!bInputEnabled) return;
+	if (!bInputEnabled || bRespawning) return;
 	if (bClimbingVines)
 	{
 		FVector LaunchDirection = -DirectionToVine;
@@ -484,19 +484,20 @@ void ABirdPlayer::Death()
 
 void ABirdPlayer::StartGlide()
 {
-	if (!bInputEnabled || !bCanGlide) return;
+	if (!bInputEnabled || !bCanGlide || bRespawning) return;
 	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	if (JumpHeld)
 	{     
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Purple, "Start Glide");
 		SwitchGlide(true);
-		GlidingAC->Play();
+		//GlidingAC->Play();
+		GlidingAC->FadeIn(0.5f, 0.6f);
 	}
 }
 
 void ABirdPlayer::Dash()
 {
-	if (!bCanDash) return;
+	if (!bCanDash || bRespawning) return;
 	bCanDash = false;
 	GetCharacterMovement()->GravityScale = 0.0f;
 	FVector DashDirectionForce = GetMesh()->GetForwardVector() * DashForce;
@@ -548,7 +549,7 @@ void ABirdPlayer::SwitchGlide(bool IsGliding)
 	}
 	else
 	{
-		GlidingAC->Stop();
+		GlidingAC->FadeOut(0.5f, 0.0f);
 		GetCharacterMovement()->GravityScale = NormalGravity;
 		GetCharacterMovement()->RotationRate.Yaw = NormalRotationRate;
 		GetCharacterMovement()->AirControl = NormalAirControl;
