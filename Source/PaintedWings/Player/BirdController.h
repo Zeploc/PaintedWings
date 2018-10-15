@@ -20,8 +20,20 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 		USoundBase* SoundBGM;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* SoundBGM2;
+		USoundBase* SoundAmbience;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* SoundAmbience2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* CicadaAmbience;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Sound")
+		UAudioComponent* BackgroundMusicAC;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Sound")
+		UAudioComponent* UIAC;
 
 public:
 	void Respawn();

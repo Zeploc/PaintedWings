@@ -29,6 +29,8 @@ AWindStream::AWindStream()
 	WindDirection = CreateDefaultSubobject<UArrowComponent>("Wind Direction Arrow");
 	WindDirection->SetupAttachment(RootComponent);
 	WindDirection->RelativeRotation.Pitch = 90.0f;
+
+	WindstreamAC = CreateDefaultSubobject<UAudioComponent>(TEXT("Windstream Audio Component"));
 }
 
 // Called when the game starts or when spawned
@@ -36,6 +38,8 @@ void AWindStream::BeginPlay()
 {
 	Super::BeginPlay();
 	Direction = WindDirection->GetForwardVector();
+
+	WindstreamAC->SetSound(WindstreamWhoosh);
 }
 
 // Called every frame
@@ -60,6 +64,7 @@ void AWindStream::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * 
 		Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);*/
 		ACharacter* player = (ACharacter*)OtherActor;
 		player->LaunchCharacter(Direction * LaunchSize, false, true);
+		WindstreamAC->Play();
 
 		/*player = (ACharacter*)OtherActor;
 		if (bStream)

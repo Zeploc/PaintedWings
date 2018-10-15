@@ -7,6 +7,7 @@
 #include "Engine/World.h"
 #include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 ABirdController::ABirdController()
@@ -14,6 +15,11 @@ ABirdController::ABirdController()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BackgroundMusicAC = CreateDefaultSubobject<UAudioComponent>(TEXT("Background Music Audio Component"));
+	BackgroundMusicAC->SetUISound(true);
+
+	UIAC = CreateDefaultSubobject<UAudioComponent>(TEXT("UI Audio Component"));
+	UIAC->SetUISound(true);
 }
 
 // Called when the game starts or when spawned
@@ -22,7 +28,10 @@ void ABirdController::BeginPlay()
 	Super::BeginPlay();
 
 	BirdPlayerRef = Cast<ABirdPlayer>(GetCharacter());
-	UGameplayStatics::PlaySound2D(GetWorld(), SoundBGM);
+
+	BackgroundMusicAC->SetSound(SoundBGM);
+	BackgroundMusicAC->Play();
+	//UGameplayStatics::PlaySound2D(GetWorld(), SoundBGM);
 }
 
 

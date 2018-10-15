@@ -45,4 +45,12 @@ public:
 		bool bStream = false;
 	bool bInside = false;
 	ACharacter* player;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Sound")
+		UAudioComponent* WindstreamAC;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* WindstreamWhoosh;
 };

@@ -338,7 +338,6 @@ void ABirdPlayer::CameraStillLerpCheck()
 	}
 }
 
-
 void ABirdPlayer::MoveForward(float Value)
 {
 	// find out which way is forward
@@ -407,40 +406,32 @@ void ABirdPlayer::StartJump()
 	if (!bInputEnabled) return;
 	if (bClimbingVines)
 	{
-		//AddMovementInput(-DirectionToVine, 5.0f);
-		//GetCharacterMovement()->AddForce(-DirectionToVine * 1000.0f);
 		FVector LaunchDirection = -DirectionToVine;
-		//LaunchDirection.Z = 5.0f;
 		LaunchCharacter(LaunchDirection * 300.0f, true, true);
 		bClimbingVines = false;
-		//BirdRef -> HasDoubleJumped = false;
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 		GetCharacterMovement()->bOrientRotationToMovement = true;
-
 	}
 
 	SwitchGlide(false);
 	GetWorldTimerManager().ClearTimer(JumpHoldTimerHandle);
 	GetWorldTimerManager().SetTimer(JumpHoldTimerHandle, this, &ABirdPlayer::StartGlide, JumpTimeToGlide, false);
 	JumpHeld = true;
-
 	
 	if (GetCharacterMovement()->IsFalling())
 	{
 		if (HasDoubleJumped) return;
 		DoubleJump = true;
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), Flap1, this->GetActorLocation(), 1.0f, 1.0f, 0.0f);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), DoubleJumpSound, this->GetActorLocation(), 1.0f, 1.0f, 0.0f);
 		GetCharacterMovement()->JumpZVelocity = DoubleJumpSize;
-		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %s"), GetCharacterMovement()->JumpZVelocity);
 		GetWorldTimerManager().ClearTimer(DoubleJumpTimerHandle);
 		if (DoubleJumpDelay > 0) GetWorldTimerManager().SetTimer(DoubleJumpTimerHandle, this, &ABirdPlayer::ApplyDoubleJump, DoubleJumpDelay, false);
 		else ApplyDoubleJump();
 	}
 	else
 	{
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), Flap1, this->GetActorLocation(), 1.0f, 1.0f, 0.0f);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FirstJumpSound, this->GetActorLocation(), 1.0f, 1.0f, 0.0f);
 		GetCharacterMovement()->JumpZVelocity = FirstJumpSize;
-		//UE_LOG(LogTemp, Warning, TEXT("Jump Velocity %f"), GetCharacterMovement()->JumpZVelocity);
 		Jump();
 	}
 }
@@ -509,7 +500,7 @@ void ABirdPlayer::Dash()
 	IsDashing = true;
 	bIsGliding = false;
 
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Woosh1, this->GetActorLocation(), 1.0f, 1.0f, 0.0f);
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), DashSound, this->GetActorLocation(), 1.0f, 1.0f, 0.0f);
 
 	FRotator Rotation = Controller->GetControlRotation();
 	Rotation.Yaw = DashDirectionForce.Rotation().Yaw;

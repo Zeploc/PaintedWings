@@ -109,32 +109,16 @@ protected:
 	bool HasMovedCamera = true;
 	bool LerpCamera = false;
 	bool IdleCameraLerp = false;
-	
-	
+		
 	class ABirdController* BirdControllerRef;
-
-
+		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* SoundAmbience;
+		USoundBase* FirstJumpSound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* SoundAmbience2;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* CicadaAmbience;
+		USoundBase* DoubleJumpSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* Flap1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* Flap2;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* Flap3;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* Flap4;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* Woosh1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-		USoundBase* Woosh2;
+		USoundBase* DashSound;
 
 public:	
 	// Called every frame
