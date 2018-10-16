@@ -120,6 +120,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 		USoundBase* DashSound;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* DeathSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		float DeathSoundVolume = 0.8f;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Sound")
 		UAudioComponent* GlidingAC;
 
