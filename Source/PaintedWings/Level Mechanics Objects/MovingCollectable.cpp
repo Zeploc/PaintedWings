@@ -52,7 +52,7 @@ void AMovingCollectable::Tick(float DeltaTime)
 				MoveTowards(destination, DeltaTime);
 				if ((destination - GetActorLocation()).Size() < 10.0f)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Next Point: "));
+					//UE_LOG(LogTemp, Warning, TEXT("Next Point: "));
 					iCurrentPoint++;
 					if (i + 1 < MovementPoints.Num())
 					{
