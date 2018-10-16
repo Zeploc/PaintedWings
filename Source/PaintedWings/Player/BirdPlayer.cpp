@@ -480,6 +480,9 @@ void ABirdPlayer::Death()
 	//GetCapsuleComponent()->SetSimulatePhysics(true);
 	//GetController()->UnPossess();
 	GetWorldTimerManager().SetTimer(RespawnHandle, this, &ABirdPlayer::MoveToCheckpoint, RespawnDelay, false);
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathSound, this->GetActorLocation(), DeathSoundVolume, 1.0f, 0.0f);
+	
 }
 
 void ABirdPlayer::StartGlide()

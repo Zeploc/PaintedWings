@@ -18,7 +18,7 @@ class PAINTEDWINGS_API ABirdPlayer : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABirdPlayer();
-	int iHealth = 3;
+	int iHealth = 1;
 	float fInvincibility = 0;
 	bool bRespawning = false;
 	bool bHiding = false;
@@ -119,6 +119,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 		USoundBase* DashSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		USoundBase* DeathSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+		float DeathSoundVolume = 0.8f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Sound")
 		UAudioComponent* GlidingAC;

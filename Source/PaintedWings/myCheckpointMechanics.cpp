@@ -16,10 +16,12 @@ AmyCheckpointMechanics::AmyCheckpointMechanics()
 	PrimaryActorTick.bCanEverTick = true;
 	// ...
 
+	BaseRoot = CreateDefaultSubobject<USceneComponent>("Base Component");
+	RootComponent = BaseRoot;
 	checkpointTrigger = CreateDefaultSubobject<UBoxComponent>("Box");
 	checkpointTrigger->OnComponentBeginOverlap.AddDynamic(this, &AmyCheckpointMechanics::OnOverlapBegin);
 	checkpointTrigger->OnComponentEndOverlap.AddDynamic(this, &AmyCheckpointMechanics::OnOverlapEnd);
-
+	checkpointTrigger->SetupAttachment(RootComponent);
 }
 
 

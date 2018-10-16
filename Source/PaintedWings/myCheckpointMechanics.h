@@ -19,7 +19,10 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-		
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
+		USceneComponent* BaseRoot;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* checkpointTrigger;
 public:
