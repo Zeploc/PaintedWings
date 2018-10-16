@@ -124,21 +124,6 @@ void ABirdPlayer::BeginPlay()
 void ABirdPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//if (BirdWeb)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("HAS MESH"));
-	//	if (bCanGlide && BirdWeb->IsVisible())
-	//	{
-	//		BirdWeb->SetVisibility(false);
-	//	}
-	//	else if (!bCanGlide && !BirdWeb->IsVisible())
-	//	{
-	//		BirdWeb->SetVisibility(true);
-	//	}
-	//}
-
-
 	if (fInvincibility > 0)
 	{
 		fInvincibility -= DeltaTime;
@@ -541,7 +526,7 @@ void ABirdPlayer::FinishDash()
 	Rotation.Pitch = 0.0f;
 	GetMesh()->RelativeRotation = Rotation;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	if (JumpHeld) SwitchGlide(true);
+	if (JumpHeld && bCanGlide) SwitchGlide(true);
 }
 
 void ABirdPlayer::SwitchGlide(bool IsGliding)
