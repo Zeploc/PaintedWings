@@ -25,9 +25,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UCameraComponent* ThirdPersonCamera;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
-		class UStaticMeshComponent* BirdWeb;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class USpringArmComponent* BoomArm;
 
