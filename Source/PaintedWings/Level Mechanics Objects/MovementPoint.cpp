@@ -10,9 +10,7 @@ UMovementPoint::UMovementPoint()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	iPointNum = 0;
-	this->bAbsoluteLocation = true;
-	this->bAbsoluteRotation = true;
-	this->bAbsoluteScale = true;
+
 	// ...
 }
 
@@ -24,7 +22,9 @@ void UMovementPoint::BeginPlay()
 	if (AMovingCollectable* owner = Cast<AMovingCollectable>(GetOwner()))
 	{
 		owner->MovementPoints.Add(this);
-
+		this->bAbsoluteLocation = true;
+		this->bAbsoluteRotation = true;
+		this->bAbsoluteScale = true;
 	}
 	// ...
 	
