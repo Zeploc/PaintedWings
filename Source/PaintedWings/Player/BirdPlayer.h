@@ -18,7 +18,7 @@ class PAINTEDWINGS_API ABirdPlayer : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABirdPlayer();
-	int iHealth = 3;
+	int iHealth = 1;
 	float fInvincibility = 0;
 	bool bRespawning = false;
 	bool bHiding = false;
