@@ -54,6 +54,36 @@ void AMovingCollectable::Tick(float DeltaTime)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Next Point: "));
 					iCurrentPoint++;
+					if (i + 1 < MovementPoints.Num())
+					{
+						FVector destination1;
+						FRotator rotation1;
+						FVector destination2;
+						FRotator rotation2;
+						MovementPoints[i]->GetSocketWorldLocationAndRotation(FName(), destination1, rotation1);
+						MovementPoints[i + 1]->GetSocketWorldLocationAndRotation(FName(), destination2, rotation2);
+
+						FVector FinalDir = destination2 - destination1;
+						FVector axis = FVector(0, 0, 1);
+						FinalDir = FinalDir.RotateAngleAxis(90, axis);
+						FQuat FinalRotate = FinalDir.Rotation().Quaternion();
+						SetActorRotation(FinalRotate);
+					}
+					else
+					{
+						FVector destination1;
+						FRotator rotation1;
+						FVector destination2;
+						FRotator rotation2;
+						MovementPoints[i]->GetSocketWorldLocationAndRotation(FName(), destination1, rotation1);
+						MovementPoints[0]->GetSocketWorldLocationAndRotation(FName(), destination2, rotation2);
+
+						FVector FinalDir = destination2 - destination1;
+						FVector axis = FVector(0, 0, 1);
+						FinalDir = FinalDir.RotateAngleAxis(90, axis);
+						FQuat FinalRotate = FinalDir.Rotation().Quaternion();
+						SetActorRotation(FinalRotate);
+					}
 				}
 			}
 		}

@@ -124,6 +124,21 @@ void ABirdPlayer::BeginPlay()
 void ABirdPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//if (BirdWeb)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("HAS MESH"));
+	//	if (bCanGlide && BirdWeb->IsVisible())
+	//	{
+	//		BirdWeb->SetVisibility(false);
+	//	}
+	//	else if (!bCanGlide && !BirdWeb->IsVisible())
+	//	{
+	//		BirdWeb->SetVisibility(true);
+	//	}
+	//}
+
+
 	if (fInvincibility > 0)
 	{
 		fInvincibility -= DeltaTime;
