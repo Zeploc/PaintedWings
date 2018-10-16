@@ -73,7 +73,9 @@ void ATreeClimbingSpider::Tick(float DeltaTime)
 				if (BirdRef->bRespawning) { return; };
 				UE_LOG(LogTemp, Warning, TEXT("FOLLOW"));
 				PlayerRef = BirdRef;
-				this->SetActorLocation(vOriginalLocation);
+				FVector Location = PlayerRef->GetActorLocation();
+				Location.Z -= 400.0f;
+				this->SetActorLocation(Location);
 				bCanKill = true;
 			}
 		}
