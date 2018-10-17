@@ -76,6 +76,7 @@ void ATreeClimbingSpider::Tick(float DeltaTime)
 				{
 					if (controller->GetCheckpoint())
 					{
+						PlayerRef = BirdRef;
 						FVector Location = controller->GetCheckpoint()->GetActorLocation();
 						Location.Z -= SpiderSpawnDistance;
 						this->SetActorLocation(Location);
