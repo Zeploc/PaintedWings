@@ -312,7 +312,7 @@ void ABirdPlayer::CameraMovement()
 				if (!CameraPlayerStillHandle.IsValid()) GetWorldTimerManager().SetTimer(CameraPlayerStillHandle, this, &ABirdPlayer::CameraStillLerpCheck, CameraLerpTimeout, false);				
 			}
 		}
-		else if (NoHeightVelocity.Size() >= MinimumStartLerpMoveSpeed && ((Angle <= 170.0f && !bIsGliding) || (GetCharacterMovement()->IsFalling() && Angle <= 100.0f)))
+		else if ((NoHeightVelocity.Size() >= MinimumStartLerpMoveSpeed && ((Angle <= 170.0f && !bIsGliding) || (GetCharacterMovement()->IsFalling() && Angle <= 100.0f))) || bIsGliding)
 		{
 			IdleCameraLerp = false;
 			float LerpSpeed = CameraLerpSpeed;
