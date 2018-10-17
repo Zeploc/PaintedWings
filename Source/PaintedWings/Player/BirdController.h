@@ -38,7 +38,7 @@ public:
 public:
 	void Respawn();
 	void AddNewCheckpoint(AActor* NewCheckpoint);
-
+	AActor* GetCheckpoint();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look at Next")
 		TMap<int, AActor*> LookAtNextActors;
