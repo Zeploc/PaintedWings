@@ -29,6 +29,8 @@ protected:
 	TArray<AActor*> ActorArray;
 	float fDefaultSpeed;
 	bool bCanKill;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float SpiderSpawnDistance = 400.0f;
 
 public:	
 	// Called every frame

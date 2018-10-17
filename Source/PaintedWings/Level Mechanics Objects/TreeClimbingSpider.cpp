@@ -6,6 +6,7 @@
 #include "Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "PaintedWings/Player/BirdController.h"
 
 
 // Sets default values
@@ -71,12 +72,34 @@ void ATreeClimbingSpider::Tick(float DeltaTime)
 			if (ABirdPlayer* BirdRef = Cast<ABirdPlayer>(ActorArray[i]))
 			{
 				if (BirdRef->bRespawning) { return; };
-				UE_LOG(LogTemp, Warning, TEXT("FOLLOW"));
-				PlayerRef = BirdRef;
-				FVector Location = PlayerRef->GetActorLocation();
-				Location.Z -= 400.0f;
-				this->SetActorLocation(Location);
-				bCanKill = true;
+				if (ABirdController* controller = Cast<ABirdController>(BirdRef->GetController()))
+				{
+					if (controller->GetCheckpoint())
+					{
+						FVector Location = controller->GetCheckpoint()->GetActorLocation();
+						Location.Z -= SpiderSpawnDistance;
+						this->SetActorLocation(Location);
+						bCanKill = true;
+					}
+					else
+					{
+						//UE_LOG(LogTemp, Warning, TEXT("FOLLOW"));
+						PlayerRef = BirdRef;
+						FVector Location = PlayerRef->GetActorLocation();
+						Location.Z -= SpiderSpawnDistance + 200.0f;
+						this->SetActorLocation(Location);
+						bCanKill = true;
+					}
+				}
+				else
+				{
+					//UE_LOG(LogTemp, Warning, TEXT("FOLLOW"));
+					PlayerRef = BirdRef;
+					FVector Location = PlayerRef->GetActorLocation();
+					Location.Z -= SpiderSpawnDistance + 200.0f;
+					this->SetActorLocation(Location);
+					bCanKill = true;
+				}
 			}
 		}
 	}
